@@ -27,42 +27,25 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Event(
-    val id: String, // Changed from Int to handle potential string IDs like in the sample data
+    val _id: String,
     val title: String,
-    val organizer: String,
+    val organiser: String,
     val description: String,
-    val eventDate: String, // Renamed for clarity (consider using a Date object if needed)
-    val location: String?,
-    val image: String?,
-    val quota: Int?,
+    val event_date: String,
+    val location: String,
+    val image: String,
+    val quota: Int,
     val highlight: Boolean,
     val createdAt: String,
     val modifiedAt: String?,
     val volunteers: List<String>?
-) {
-    companion object {
-        const val ERROR_ID = "500"
-        val ERROR_IMAGE = "ERROR.jpg"
-
-//        fun isErrorEvent(event: Event): Boolean = event.id == ERROR_ID
-        val data = listOf(
-    Event(
-        "123", // Assuming ID is a string in your actual data
-        "test",
-"COMP",
-        " COMP ",
-        "2023-11-23T12:32 ",
-        "HKBU",
-        "https://picsum.photos/seed/2023-11-23T12:32/800/800",
-        6,
-        true,
-        "2023-11-23T13:29:26.636Z",
-        "2023-11-28T03:20:11.704Z",
-        listOf("655ddc74cb6fa4000273365e")
-    ),
 )
-    }
-}
+
+@Serializable
+data class Response(
+    val events: List<Event>,
+    val total: Int
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +71,7 @@ fun EventScreen(events: List<Event>) {
                 Column {
 
                     Box(Modifier.fillMaxSize()) {
-                        Text(feed.title,
+                        Text("HELLO",
                             Modifier
                                 .align(Alignment.Center)
                                 .padding(2.dp))
@@ -103,10 +86,10 @@ fun EventScreen(events: List<Event>) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FeedPreview() {
-    EventManagerTheme {
-        EventScreen(Event.data)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FeedPreview() {
+//    EventManagerTheme {
+//        EventScreen(Event.data)
+//    }
+//}

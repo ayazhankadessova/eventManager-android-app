@@ -1,7 +1,5 @@
 package com.example.eventmanager
 
-import com.example.eventmanager.Event.Companion.ERROR_ID
-import com.example.eventmanager.Event.Companion.ERROR_IMAGE
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -31,27 +29,18 @@ object KtorClient {
     // Note that we're using suspend functions to enable asynchronous programming in Kotlin.
 // This allows us to write cleaner, more concise code that's easier to read and maintain.
     suspend fun getEvents(): List<Event> {
-        return try {
-            httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=1&perPage=3&highlight=true").body()
+        try {
+            // Consider removing additional parameters if the API doesn't require them.
+            // If required, adjust based on API documentation.
+            val response = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events").body<Response>()
+            return response.events
         } catch (e: Exception) {
-            listOf(
-                Event(
-                    ERROR_ID,
-                    ERROR_IMAGE,
-                    e.toString(),
-                    "Error fetching events", // Use a more descriptive title for errors
-                    "2023-11-23T13:29:26.636Z",
-                    null,
-                    null,
-                    null,
-                    false,
-                    "2023-11-23T13:29:26.636Z",
-                    null,
-                    null,
-                )
-            )
+            // Log the exception for better debugging
+//            log.error("Error fetching events", e)
+            throw e // Re-throw the exception for caller to handle or provide a more user-friendly error message
         }
     }
+
 
     @Serializable
     data class HttpBinResponse(
