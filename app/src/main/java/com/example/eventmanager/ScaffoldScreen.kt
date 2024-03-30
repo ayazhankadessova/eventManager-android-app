@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -40,7 +39,7 @@ fun ScaffoldScreen() {
     val items = listOf("Home", "Events", "Search", "Login")
 
     val feeds by produceState(
-        initialValue = listOf<Event>(),
+        initialValue = Response(listOf<Event>(), null, null, null),
         producer = {
             value = KtorClient.getEvents()
         }
@@ -96,7 +95,7 @@ fun ScaffoldScreen() {
                 ) {
                     // mapping of routes and what screens will be shown
                     composable("home") { HomeScreen() }
-                    composable("events"){ EventScreen(events = feeds)}
+                    composable("events"){ EventScreen(feeds)}
 //                    composable("event/{deptId}") { NavbackStackEntry ->
 //                        EventScreen(NavbackStackEntry.arguments?.getString("deptId"))
 //                    }

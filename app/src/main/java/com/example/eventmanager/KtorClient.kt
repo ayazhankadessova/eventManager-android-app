@@ -1,5 +1,4 @@
 package com.example.eventmanager
-
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -9,6 +8,31 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
+
+@Serializable
+data class Event(
+    val _id: String,
+    val title: String,
+    val organiser: String,
+    val description: String,
+    val event_date: String,
+    val location: String,
+    val image: String,
+    val quota: Int,
+    val highlight: Boolean,
+    val createdAt: String,
+    val modifiedAt: String?,
+    val volunteers: List<String> = emptyList() // Make volunteers nullable to handle cases where it might be missing
+)
+
+
+@Serializable
+data class Response(
+    val events: List<Event>, // This is the list of events
+    val total: Int?,
+    val perPage: Int?,
+    val page: Int?
+)
 
 object KtorClient {
 
@@ -28,16 +52,25 @@ object KtorClient {
     }
     // Note that we're using suspend functions to enable asynchronous programming in Kotlin.
 // This allows us to write cleaner, more concise code that's easier to read and maintain.
-    suspend fun getEvents(): List<Event> {
+    suspend fun getEvents(): Response {
         try {
-            // Consider removing additional parameters if the API doesn't require them.
-            // If required, adjust based on API documentation.
-            val response = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events").body<Response>()
-            return response.events
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events")
+                .body<Response>()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging
-//            log.error("Error fetching events", e)
-            throw e // Re-throw the exception for caller to handle or provide a more user-friendly error message
+            // ...
+            throw e // Re-throw the exception for caller to handle
+        }
+    }
+
+    suspend fun getEventsPage(number : Int): Response {
+        try {
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=$number")
+                .body<Response>()// Access the list of events from the parsed Response object
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            throw e // Re-throw the exception for caller to handle
         }
     }
 

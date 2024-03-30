@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "1.9.22"
+
 }
 
 android {
@@ -58,8 +60,22 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.3")
+    implementation("androidx.compose.material:material:1.0.5") // Check for the latest version
+
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
 
     implementation("androidx.core:core-ktx:1.12.0")
+    implementation("io.ktor:ktor-client-serialization:2.1.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
+
+    implementation("io.ktor:ktor-client-android:2.1.2")
+    implementation("io.ktor:ktor-client-core:2.1.2")
+    implementation("io.ktor:ktor-client-serialization:2.1.2")
+    implementation("io.ktor:ktor-client-logging:2.1.2")
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
+
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
