@@ -14,11 +14,11 @@
 //    @Query("SELECT * from event")
 //    fun getAll(): LiveData<List<Event>>
 //
-//    @Query("SELECT * from event where deptId = :id")
-//    fun getByDeptId(id: String): LiveData<List<Event>>
+//    @Query("SELECT * from event where highlight = true")
+//    fun getHighlight(id: String): LiveData<List<Event>>
 //
-//    @Query("SELECT * from event where saved=true")
-//    fun getSaved(): LiveData<List<Event>>
+////    @Query("SELECT * from event where =true")
+////    fun getSaved(): LiveData<List<Event>>
 //
 //    @Update
 //    suspend fun update(event:Event)

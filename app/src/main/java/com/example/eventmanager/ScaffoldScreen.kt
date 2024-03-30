@@ -95,11 +95,11 @@ fun ScaffoldScreen() {
                 ) {
                     // mapping of routes and what screens will be shown
                     composable("home") { HomeScreen() }
-                    composable("events"){ EventScreen(feeds)}
+                    composable("events"){ EventScreen(feeds, navController)}
 //                    composable("event/{deptId}") { NavbackStackEntry ->
 //                        EventScreen(NavbackStackEntry.arguments?.getString("deptId"))
 //                    }
-                    composable("event/{deptId}") { HomeScreen()
+                    composable("event/{index}") { HomeScreen()
                     }
                     composable("search") { HomeScreen() }
                     composable("login") { HomeScreen() }

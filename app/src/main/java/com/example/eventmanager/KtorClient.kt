@@ -1,4 +1,5 @@
 package com.example.eventmanager
+import androidx.room.Entity
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -9,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 
+@Entity(tableName = "event")
 @Serializable
 data class Event(
     val _id: String,
