@@ -96,7 +96,7 @@ fun ScaffoldScreen() {
                     startDestination = "home",
                 ) {
                     // mapping of routes and what screens will be shown
-                    composable("home") { HomeScreen() }
+                    composable("home") { FeedScreen(response = feeds) }
                     composable("events"){ EventScreen(feeds, navController)}
 //
 
