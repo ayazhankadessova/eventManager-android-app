@@ -13,8 +13,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -96,10 +98,19 @@ fun ScaffoldScreen() {
                     // mapping of routes and what screens will be shown
                     composable("home") { HomeScreen() }
                     composable("events"){ EventScreen(feeds, navController)}
-//                    composable("event/{deptId}") { NavbackStackEntry ->
-//                        EventScreen(NavbackStackEntry.arguments?.getString("deptId"))
-//                    }
-                    composable("event/{index}") { HomeScreen()
+//
+
+                    composable("event/{index}") { backStackEntry ->
+                        val index = backStackEntry.arguments?.getString("index")?.toIntOrNull()
+                        if (index != null) {
+                            var eventsForPage by remember { mutableStateOf(listOf<Event>()) }
+                            LaunchedEffect(index) {
+                                eventsForPage = KtorClient.getEventsPage(index).events
+                            }
+                            EventPageScreen(eventsForPage, snackbarHostState, index.toString())
+                        } else {
+                            // Handle the case where index is null
+                        }
                     }
                     composable("search") { HomeScreen() }
                     composable("login") { HomeScreen() }

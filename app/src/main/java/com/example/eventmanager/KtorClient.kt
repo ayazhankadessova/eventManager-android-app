@@ -8,7 +8,12 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.json.Json
 
 @Entity(tableName = "event")
 @Serializable
@@ -22,7 +27,7 @@ data class Event(
     val image: String,
     val quota: Int,
     val highlight: Boolean,
-    val createdAt: String,
+    val createdAt: String?,
     val modifiedAt: String?,
     val volunteers: List<String> = emptyList() // Make volunteers nullable to handle cases where it might be missing
 )
@@ -42,7 +47,10 @@ object KtorClient {
 
     val httpClient = HttpClient {
         install(ContentNegotiation) {
-            json() // enable the client to perform JSON serialization
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            }) // enable the client to perform JSON serialization
         }
         install(Logging)
         defaultRequest {
