@@ -24,10 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import android.util.Log;
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
 //import com.example.infoday.ui.theme.InfoDayTheme
 
 
@@ -107,9 +109,25 @@ fun ScaffoldScreen() {
                             LaunchedEffect(index) {
                                 eventsForPage = KtorClient.getEventsPage(index).events
                             }
-                            EventPageScreen(eventsForPage, snackbarHostState, index.toString())
+                            EventPageScreen(eventsForPage, navController, index.toString())
                         } else {
                             // Handle the case where index is null
+                        }
+                    }
+                    composable("oneEvent/{_id}") { backStackEntry ->
+                        val eventId = backStackEntry.arguments?.getString("_id")
+                        Log.i("Event id is null" , backStackEntry.arguments.toString())
+                        if (eventId != null) {
+
+                            var event by remember { mutableStateOf<Event?>(null) }
+                            LaunchedEffect(eventId) {
+                                event = KtorClient.getEvent(eventId)
+                            }
+                            event?.let { EventPage(event!!) }
+                        } else {
+                            // Handle the case where eventId is null
+                            Log.i("Event id is null" ," NULL");
+
                         }
                     }
                     composable("search") { HomeScreen() }

@@ -1,5 +1,6 @@
 package com.example.eventmanager
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,11 +14,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
 
 import androidx.compose.material3.Text
+import androidx.navigation.NavController
 
 @Composable
 fun EventPageScreen(
     eventsForPage: List<Event>,
-    snackbarHostState: SnackbarHostState,
+    navController : NavController,
     index: String?
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -28,20 +30,9 @@ fun EventPageScreen(
                 headlineContent = { Text(event.title) },
                 supportingContent = { Text(event.location) }, // Add this line
                 // listItem is wrapped in pointerInput which allows us to detectGestures
-                modifier = Modifier.pointerInput(Unit) {
-                    // detect Tap gestures helps us specify action to take when longPress is detected
-                    detectTapGestures(
-                        onLongPress = {
-                            coroutineScope.launch {
-//                                event.saved = true
-//                                eventDao.update(event)
-                                snackbarHostState.showSnackbar(
-                                    "Event has been added to itinerary."
-                                )
-                            }
-                        }
-                    )
-                }
+                modifier = Modifier.clickable {
+                    navController.navigate("oneEvent/${event._id}")
+                },
             )
             Divider()
         }

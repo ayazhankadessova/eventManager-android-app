@@ -8,11 +8,7 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.json.Json
 
 @Entity(tableName = "event")
@@ -84,6 +80,16 @@ object KtorClient {
         }
     }
 
+    suspend fun getEvent(id: String?): Event {
+        try {
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
+                .body()// Access the list of events from the parsed Response object
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            throw e // Re-throw the exception for caller to handle
+        }
+    }
 
     @Serializable
     data class HttpBinResponse(
