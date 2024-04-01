@@ -114,29 +114,36 @@ object KtorClient {
         }
     }
 
-    suspend fun joinEvent(eventId : String, userId: String) {
+    suspend fun joinEvent(eventId : String, userId: String): String {
+        try {
 
-        //        val loginRequest = LoginRequest(email, password)
-        val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers") {
-            contentType(ContentType.Application.Json)
-            setBody(JoinRequest(userId))
+            //        val loginRequest = LoginRequest(email, password)
+            Log.i("[Join Event] eventId:", eventId)
+            Log.i("[Join Event] userId", userId)
+            val response: HttpResponse =
+                httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
+//                    contentType(ContentType.Application.Json)
+//                    setBody(JoinRequest(userId))
+                }
+
+            Log.i("[Join Event]", response.body())
+
+//            return response.toString()
+
+            if (response.status == HttpStatusCode.OK) {
+
+                return "Event Joined"
+
+            } else {
+
+                return "Error: unavailable or full quota!"
+
+            }
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            return "Error: unavailable or full quota!" // Re-throw the exception for caller to handle
         }
-
-        Log.i("[Join Event]", response.body())
-
-        return response.body()
-
-//        if (response.status == HttpStatusCode.OK) {
-//            val tokenSet: String = response.body<LoginResponse>().token
-//            token = tokenSet
-//            Log.i("TOKEEEN", token)
-//            return tokenSet
-//
-//        } else {
-//
-//            return null
-//
-//        }
 
     }
 

@@ -121,16 +121,11 @@ fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Bool
                         Button(
                             onClick = {
                                 coroutineScope.launch {
-                                    userId?.let { KtorClient.joinEvent(event._id, it) }
+                                    val res = userId?.let { KtorClient.joinEvent(event._id, it) }
 
-//                                    if (stringBody == "OK") {
-//
-//                                        snackbarHostState.showSnackbar("You have joined the event!")
-//
-//                                    } else {
-//                                        snackbarHostState.showSnackbar("Error while Joining the Event...")
-//
-//                                    }
+                                    if (res != null) {
+                                        snackbarHostState.showSnackbar(res)
+                                    }
                                 }
                             },
                             shape = RoundedCornerShape(5.dp),
