@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.Context
 import android.util.Log
+import com.auth0.android.jwt.JWT
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.example.eventmanager.KtorClient.login
+import com.google.common.net.MediaType.JWT
 import kotlinx.coroutines.launch
 
 
@@ -164,7 +167,10 @@ fun checkCredentials(creds: Credentials, lifecycleOwner: LifecycleOwner) {
 //@Preview
 @Composable
 fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState, loginViewModel: LoginViewModel) {
+    val dataStore = UserPreferences(LocalContext.current)
     val coroutineScope = rememberCoroutineScope()
+
+    val userId by dataStore.getUserId.collectAsState(initial = null)
 //    val lifecycleOwner = LocalLifecycleOwner.current
     Surface {
         var credentials by remember { mutableStateOf(Credentials()) }
@@ -203,6 +209,14 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                             loginViewModel.logIn()
                             snackbarHostState.showSnackbar("Successful Login " + stringBody)
 
+                            val jwt = JWT(stringBody)
+                            val userId: String? = jwt.getClaim("_id").asString()
+
+                            userId?.let { Log.i("userID", it) }
+
+                            if (userId != null) {
+                                dataStore.saveUserId(userId)
+                            }
                             navController.navigate("home")
                         } else {
                             snackbarHostState.showSnackbar("Error while logging in.")

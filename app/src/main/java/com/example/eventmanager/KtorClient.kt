@@ -40,7 +40,17 @@ data class Response(
 )
 
 @Serializable
+data class ResponseNew(
+    val events: List<Event>, // This is the list of events
+    val total: Int?
+)
+
+
+@Serializable
 data class LoginRequest(val email: String, val password: String)
+
+@Serializable
+data class JoinRequest(val userId: String)
 
 @Serializable
 data class LoginResponse(val token: String)
@@ -89,16 +99,45 @@ object KtorClient {
         }
     }
 
-    suspend fun getMyEvents(id : String): Response {
+    suspend fun getMyEvents(id : String): ResponseNew {
         try {
-            Log.i("TOKEEEN", token)
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
-                .body<Response>()// Access the list of events from the parsed Response object
+            Log.i("[Get My Events] Token", token)
+            Log.i("[Get My Events] userId", id)
+            val ResponseNew = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
+                .body<ResponseNew>()// Access the list of events from the parsed Response object
+            Log.i("REPONSE New", ResponseNew.toString())
+            return ResponseNew
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
             throw e // Re-throw the exception for caller to handle
         }
+    }
+
+    suspend fun joinEvent(eventId : String, userId: String) {
+
+        //        val loginRequest = LoginRequest(email, password)
+        val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers") {
+            contentType(ContentType.Application.Json)
+            setBody(JoinRequest(userId))
+        }
+
+        Log.i("[Join Event]", response.body())
+
+        return response.body()
+
+//        if (response.status == HttpStatusCode.OK) {
+//            val tokenSet: String = response.body<LoginResponse>().token
+//            token = tokenSet
+//            Log.i("TOKEEEN", token)
+//            return tokenSet
+//
+//        } else {
+//
+//            return null
+//
+//        }
+
     }
 
     suspend fun getEvent(id: String?): Event {

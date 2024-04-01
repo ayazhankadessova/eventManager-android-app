@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import android.util.Log;
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,7 +40,12 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldScreen(loginViewModel: LoginViewModel) {
-    val loggedIn = loginViewModel.loggedIn.value
+
+    val dataStore = UserPreferences(LocalContext.current)
+    val userId by dataStore.getUserId.collectAsState(initial = null)
+
+    var loggedIn:Boolean = loginViewModel.loggedIn.value
+//    val loggedIn = loginViewModel.loggedIn.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     val navController = rememberNavController()
@@ -127,7 +134,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             LaunchedEffect(eventId) {
                                 event = KtorClient.getEvent(eventId)
                             }
-                            event?.let { EventPage(event!!) }
+                            event?.let { EventPage(event!!, snackbarHostState, loggedIn) }
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");
@@ -135,13 +142,14 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                         }
                     }
                     composable("user") { backStackEntry ->
-                        val userId = loginViewModel.userId
-                        Log.i(backStackEntry.arguments?.toString(), "check")
+//                        val dataStore = UserPreferences(LocalContext.current)
+//                        val userId by dataStore.getUserId.collectAsState(initial = null)
+//                        Log.i(backStackEntry.arguments?.toString(), "check")
                         if (userId != null) {
 
                             var eventsForPage by remember { mutableStateOf(listOf<Event>()) }
                             LaunchedEffect(userId) {
-                                eventsForPage = KtorClient.getMyEvents(userId).events
+                                eventsForPage = KtorClient.getMyEvents(userId!!).events
                             }
                             MyFeedScreen(eventsForPage)
                         } else {
