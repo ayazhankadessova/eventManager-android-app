@@ -1,4 +1,5 @@
 package com.example.eventmanager
+import android.util.Log
 import androidx.room.Entity
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -88,6 +89,18 @@ object KtorClient {
         }
     }
 
+    suspend fun getMyEvents(id : String): Response {
+        try {
+            Log.i("TOKEEEN", token)
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
+                .body<Response>()// Access the list of events from the parsed Response object
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            throw e // Re-throw the exception for caller to handle
+        }
+    }
+
     suspend fun getEvent(id: String?): Event {
         try {
             return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
@@ -111,6 +124,7 @@ object KtorClient {
         if (response.status == HttpStatusCode.OK) {
             val tokenSet: String = response.body<LoginResponse>().token
             token = tokenSet
+            Log.i("TOKEEEN", token)
             return tokenSet
 
         } else {
@@ -144,13 +158,6 @@ object KtorClient {
     of the response.
      */
 
-    suspend fun postFeedback(feedback: String): String {
 
-        val response: HttpBinResponse = httpClient.post("https://httpbin.org/post") {
-            setBody(feedback)
-        }.body()
-
-        return response.headers["X-Amzn-Trace-Id"].toString()
-    }
 }
 

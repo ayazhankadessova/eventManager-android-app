@@ -104,7 +104,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     // mapping of routes and what screens will be shown
                     composable("home") { FeedScreen(response = feeds) }
                     composable("events"){ EventScreen(feeds, navController)}
-                    composable("user") { HomeScreen()}
+//                    composable("user") { HomeScreen()}
 //
 
                     composable("event/{index}") { backStackEntry ->
@@ -128,6 +128,22 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                                 event = KtorClient.getEvent(eventId)
                             }
                             event?.let { EventPage(event!!) }
+                        } else {
+                            // Handle the case where eventId is null
+                            Log.i("Event id is null" ," NULL");
+
+                        }
+                    }
+                    composable("user") { backStackEntry ->
+                        val userId = loginViewModel.userId
+                        Log.i(backStackEntry.arguments?.toString(), "check")
+                        if (userId != null) {
+
+                            var eventsForPage by remember { mutableStateOf(listOf<Event>()) }
+                            LaunchedEffect(userId) {
+                                eventsForPage = KtorClient.getMyEvents(userId).events
+                            }
+                            MyFeedScreen(eventsForPage)
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");

@@ -22,8 +22,6 @@ fun EventPageScreen(
     navController : NavController,
     index: String?
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     LazyColumn {
         items(eventsForPage) { event ->
             ListItem(

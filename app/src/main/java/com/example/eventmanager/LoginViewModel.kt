@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 
 class LoginViewModel: ViewModel() {
     val loggedIn = mutableStateOf(false)
+    val userId = "660a5c14332f9df622cbac0a"
 
     open fun logIn() {
         // Update this with your actual login logic
