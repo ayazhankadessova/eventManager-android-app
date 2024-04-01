@@ -14,5 +14,7 @@ Next:
 - [ ] show my reged events
 - [ ] Add join event
 
+- [ ] check if email is already taken
+
 
 COntent negatiation & serialization : https://ktor.io/docs/serialization.html
