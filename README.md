@@ -6,8 +6,13 @@ ListItem : https://medium.com/@renaud.mathieu/discovering-material-3-for-android
 - [ ] show recent 3 events 
 - [ ] add back things
 - [ ] get 6 on every page project screen
-- [ ] Authorize 
-- [ ]] Register
+- [x] Register Page
+- []make pwd invisible
+Next: 
+
+- [ ] Authorize
+- [ ] show my reged events
+- [ ] Add join event
 
 
 COntent negatiation & serialization : https://ktor.io/docs/serialization.html
