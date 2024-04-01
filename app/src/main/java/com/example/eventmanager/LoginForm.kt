@@ -1,9 +1,9 @@
 package com.example.eventmanager
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.widget.Toast
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,23 +23,30 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import com.example.eventmanager.KtorClient.login
+import kotlinx.coroutines.launch
 
 
 data class Credentials(
@@ -137,20 +144,28 @@ fun PasswordField(
 
 }
 
-fun checkCredentials(creds: Credentials, context: Context): Boolean {
-    if (creds.isNotEmpty() && creds.login == "admin") {
-        context.startActivity(Intent(context, MainActivity::class.java))
-        (context as Activity).finish()
-        return true
+fun checkCredentials(creds: Credentials, lifecycleOwner: LifecycleOwner) {
+    if (creds.isNotEmpty()) {
+        lifecycleOwner.lifecycleScope.launch {
+            val loginResult = login(creds.login, creds.pwd)
+            if (loginResult != null) {
+                val context = lifecycleOwner as Context
+                context.startActivity(Intent(context, MainActivity::class.java))
+                (context as Activity).finish()
+            } else {
+                Log.i("Cred empty", "NULL")
+            }
+        }
     } else {
-        Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_SHORT).show()
-        return false
+        Log.i("Cred empty", "NULL")
     }
 }
 
 //@Preview
 @Composable
-fun LoginForm(navController: NavController) {
+fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState, loginViewModel: LoginViewModel) {
+    val coroutineScope = rememberCoroutineScope()
+//    val lifecycleOwner = LocalLifecycleOwner.current
     Surface {
         var credentials by remember { mutableStateOf(Credentials()) }
         val context = LocalContext.current
@@ -171,15 +186,29 @@ fun LoginForm(navController: NavController) {
                 value = credentials.pwd,
                 onChange = { data -> credentials = credentials.copy(pwd = data) },
                 submit = {
-                    if (!checkCredentials(credentials, context)) credentials = Credentials()
+                    credentials = Credentials()
                 },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
+
             Button(
                 onClick = {
-                    if (!checkCredentials(credentials, context)) credentials = Credentials()
+                    coroutineScope.launch {
+                        val stringBody: String? = login(credentials.login, credentials.pwd)
+
+                        if (stringBody != null) {
+                            // go to main page
+                            loginViewModel.logIn()
+                            snackbarHostState.showSnackbar("Successful Login " + stringBody)
+
+                            navController.navigate("home")
+                        } else {
+                            snackbarHostState.showSnackbar("Error while logging in.")
+
+                        }
+                    }
                 },
                 enabled = credentials.isNotEmpty(),
                 shape = RoundedCornerShape(5.dp),

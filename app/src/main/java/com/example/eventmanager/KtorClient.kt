@@ -6,6 +6,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
@@ -36,6 +37,13 @@ data class Response(
     val perPage: Int?,
     val page: Int?
 )
+
+@Serializable
+data class LoginRequest(val email: String, val password: String)
+
+@Serializable
+data class LoginResponse(val token: String)
+
 
 object KtorClient {
 
@@ -90,6 +98,29 @@ object KtorClient {
             throw e // Re-throw the exception for caller to handle
         }
     }
+
+
+    suspend fun login(email: String, password: String): String? {
+
+//        val loginRequest = LoginRequest(email, password)
+        val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/login/") {
+            contentType(ContentType.Application.Json)
+            setBody(LoginRequest(email,password))
+        }
+
+        if (response.status == HttpStatusCode.OK) {
+            val tokenSet: String = response.body<LoginResponse>().token
+            token = tokenSet
+            return tokenSet
+
+        } else {
+
+            return null
+
+        }
+    }
+
+
 
     @Serializable
     data class HttpBinResponse(

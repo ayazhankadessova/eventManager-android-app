@@ -37,12 +37,14 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldScreen() {
+fun ScaffoldScreen(loginViewModel: LoginViewModel) {
+    val loggedIn = loginViewModel.loggedIn.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Home", "Events", "Search", "Login")
+    var items = if (loggedIn) listOf("Home", "Events", "Search", "User") else listOf("Home", "Events", "Search", "Login")
+
 
     val feeds by produceState(
         initialValue = Response(listOf<Event>(), null, null, null),
@@ -102,6 +104,7 @@ fun ScaffoldScreen() {
                     // mapping of routes and what screens will be shown
                     composable("home") { FeedScreen(response = feeds) }
                     composable("events"){ EventScreen(feeds, navController)}
+                    composable("user") { HomeScreen()}
 //
 
                     composable("event/{index}") { backStackEntry ->
@@ -118,7 +121,6 @@ fun ScaffoldScreen() {
                     }
                     composable("oneEvent/{_id}") { backStackEntry ->
                         val eventId = backStackEntry.arguments?.getString("_id")
-                        Log.i("Event id is null" , backStackEntry.arguments.toString())
                         if (eventId != null) {
 
                             var event by remember { mutableStateOf<Event?>(null) }
@@ -133,7 +135,7 @@ fun ScaffoldScreen() {
                         }
                     }
                     composable("search") { HomeScreen() }
-                    composable("login") { LoginForm(navController) }
+                    composable("login") { LoginForm(navController, snackbarHostState, loginViewModel) }
                     composable("registrationPage") { RegistrationForm()}
                 }
             }
