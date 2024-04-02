@@ -1,11 +1,15 @@
 ListItem : https://medium.com/@renaud.mathieu/discovering-material-3-for-android-listitem-62f30b3cad68
 
+BUGS:
+
+1. Integrate with Join Event
+2. Imtegrate with Unregister
+3. Integrate show My Events
+4. Age group drop down !!!
+
 - [x] show one event
 - [x] Register Page
-Next: 
-
 - [x] Authorize
-- [ ] show my reged events -> All events unavailable
 - [x] Add join event
 
 - [x] Register 
