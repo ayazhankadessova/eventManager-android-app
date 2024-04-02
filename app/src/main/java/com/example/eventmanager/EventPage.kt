@@ -112,7 +112,7 @@ fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Bool
             }
 
             if (loggedIn) {
-                if (registered) {
+                if (!registered) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(
                             modifier = Modifier.align(Alignment.Center),

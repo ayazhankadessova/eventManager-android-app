@@ -8,13 +8,13 @@ Next:
 - [ ] show my reged events -> All events unavailable
 - [x] Add join event
 
-- [ ] Register 
-- [ ] Unjoin Event
-- [ ] Search
+- [x] Register 
+- [x] Unjoin Event
+- [ ] Search !!
 
 Later:
 - [ ] check if email is already taken
-- [ ]make pwd invisible
+- [ ] make pwd invisible
 - [ ] get 6 on every page project screen
 - [ ] get 3 recent events on the feed page
 

@@ -116,7 +116,10 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     startDestination = "home",
                 ) {
                     // mapping of routes and what screens will be shown
-                    composable("home") { FeedScreen(events, navController) }
+                    composable("home") {
+                        selectedItem = 0
+                        FeedScreen(events, navController)
+                    }
                     composable("events"){ EventScreen(response, navController)}
 //                    composable("user") { HomeScreen()}
 //
@@ -154,7 +157,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
 
                         }
                     }
-                    composable("user") { backStackEntry ->
+                    composable("user") {
 //                        val dataStore = UserPreferences(LocalContext.current)
 //                        val userId by dataStore.getUserId.collectAsState(initial = null)
 //                        Log.i(backStackEntry.arguments?.toString(), "check")

@@ -38,16 +38,13 @@ fun MyFeedScreen(eventsForPage: List<Event>, navController: NavHostController) {
             val isClicked = remember { mutableStateOf(false) }
 
             Card (
-                onClick = { isClicked.value = !isClicked.value },
+                onClick = { navController.navigate("oneEvent/${event._id}") },
                 modifier = Modifier
                     .fillMaxWidth().height(200.dp)
                     .border(
                         width = 5.dp,
-                        color = if (isClicked.value) Color.Yellow else whiteBorder
-                    ).clickable {
-                    navController.navigate("oneEvent/${event._id}")
-                },
-
+                        color = whiteBorder
+                    )
             ) {
                 Column {
                     AsyncImage(
