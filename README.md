@@ -17,6 +17,7 @@ Later:
 - [ ] get 6 on every page project screen
 - [ ] get 3 recent events on the feed page
 - [ ] fix top apps
+- Reg/unreg !!!
 
 Login:
 
