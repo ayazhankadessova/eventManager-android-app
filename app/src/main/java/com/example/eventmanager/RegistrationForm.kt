@@ -133,10 +133,13 @@ fun RegistrationForm() {
             RegistrationField(
                 value = registrationData.about,
                 onChange = { data -> registrationData = registrationData.copy(about = data) },
-                label = "About",
+                label = "About me and Remark",
                 placeholder = "Enter About",
                 modifier = Modifier.fillMaxWidth(),
             )
+
+
+
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
@@ -144,6 +147,7 @@ fun RegistrationForm() {
                     if (!checkRegData(registrationData, context)) {
                         registrationData = RegistrationData()
                     } else {
+
 
                     }
                 },

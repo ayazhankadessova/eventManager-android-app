@@ -26,53 +26,138 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+//import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SearchBar
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(eventsForPage: List<Event>, navController: NavHostController) {
+fun FeedScreen(eventsForPage: List<Event>, navController: NavHostController, search:Boolean) {
+    var searchQuery by remember { mutableStateOf("") }
+    var events by remember { mutableStateOf(eventsForPage) }
+    var active by remember { mutableStateOf(false) } // Active state for SearchBar
+    val coroutineScope = rememberCoroutineScope()
 
-//    val lighterBorder = Color.Magenta
-    val whiteBorder = Color.White
-    LazyColumn {
-        items(eventsForPage) { event ->
-            val isClicked = remember { mutableStateOf(false) }
+    if (search) {
 
-            Card (
-                onClick = { navController.navigate("oneEvent/${event._id}") },
-                modifier = Modifier
-                    .fillMaxWidth().height(200.dp)
-                    .border(
-                        width = 5.dp,
-                        color = whiteBorder
-                    )
-            ) {
-                Column {
-                    AsyncImage(
-                        model = event.image,
-                        contentDescription = "Home page Picture",
+        Column {
+            SearchBar(
+                modifier = Modifier.fillMaxWidth(),
+                query = searchQuery,
+                onQueryChange = { newQuery -> searchQuery = newQuery },
+                active = active,
+                placeholder = { Text(text = "Search events") },
+                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon") },
+                onActiveChange = {
+                    active = it
+                },
+                onSearch = {
+
+                    coroutineScope.launch {
+                        try {
+                            val response = KtorClient.getEventsSearch(searchQuery)
+                            // Update the list of events with the result from the API
+                            events = response.events
+                        } catch (e: Exception) {
+                            // Handle the exception
+                        }
+                    }
+
+                    active = false
+                },
+                content = {},
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        Icon(
+                            modifier = Modifier.clickable { searchQuery = "" },
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear search query"
+                        )
+                    }
+                }
+            )
+
+            LazyColumn {
+                items(events) { event ->
+
+                    Card (
+                        onClick = { navController.navigate("oneEvent/${event._id}") },
                         modifier = Modifier
-                            .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
-                    )
+                            .fillMaxWidth().height(200.dp)
+                    ) {
+                        Column {
+                            AsyncImage(
+                                model = event.image,
+                                contentDescription = "Home page Picture",
+                                modifier = Modifier
+                                    .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
+                            )
+                        }
+                    }
+                    Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = event.title,
+                                style = TextStyle(fontSize = 20.sp),
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = event.organiser,
+                                style = TextStyle(fontSize = 15.sp, color = Color.Gray),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
                 }
             }
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = event.title,
-                        style = TextStyle(fontSize = 20.sp),
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = event.organiser,
-                        style = TextStyle(fontSize = 15.sp, color = Color.Gray),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+        }
 
-            Divider(modifier = Modifier.padding(16.dp), thickness = 2.dp, color = Color.Gray)
+    } else {
+        LazyColumn {
+            items(eventsForPage) { event ->
+
+                Card (
+                    onClick = { navController.navigate("oneEvent/${event._id}") },
+                    modifier = Modifier
+                        .fillMaxWidth().height(200.dp)
+                ) {
+                    Column {
+                        AsyncImage(
+                            model = event.image,
+                            contentDescription = "Home page Picture",
+                            modifier = Modifier
+                                .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
+                        )
+                    }
+                }
+                Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = event.title,
+                            style = TextStyle(fontSize = 20.sp),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = event.organiser,
+                            style = TextStyle(fontSize = 15.sp, color = Color.Gray),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
         }
     }
+
 }

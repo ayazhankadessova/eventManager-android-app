@@ -99,6 +99,17 @@ object KtorClient {
         }
     }
 
+    suspend fun getEventsSearch(query : String): Response {
+        try {
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?search=$query")
+                .body<Response>()// Access the list of events from the parsed Response object
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            throw e // Re-throw the exception for caller to handle
+        }
+    }
+
     suspend fun getMyEvents(id : String): ResponseNew {
         try {
             Log.i("[Get My Events] Token", token)

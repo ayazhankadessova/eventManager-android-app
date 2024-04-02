@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -27,7 +26,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import android.util.Log;
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -71,24 +78,32 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             // TopAppBar
-            CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp),
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.secondary,
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Outlined.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                },
                 title = {
-                    Text("HKBU InfoDay App")
-                }
+                    Text(items[selectedItem])
+                },
+
+
             )
         },
         bottomBar = {
             NavigationBar {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        icon = { Icon(
-                            Icons.Outlined.Favorite, contentDescription = item, tint = colorResource(
-                                id = (R.color.purple_200)
-                            )
-                        ) },
-                        modifier = Modifier.testTag(item),
-                        label = { Text(item) },
+                        icon = { Text(item) },
                         selected = selectedItem == index,
                         // navigate to a new destination, clear all previous destinations from the back stack (while saving their state), and ensure that only one instance of each destination exists on the back stack.
                         onClick = {
@@ -118,7 +133,10 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     // mapping of routes and what screens will be shown
                     composable("home") {
                         selectedItem = 0
-                        FeedScreen(events, navController)
+                        FeedScreen(events, navController, false)
+                    }
+                    composable("search") {
+                        FeedScreen(events, navController, true)
                     }
                     composable("events"){ EventScreen(response, navController)}
 //                    composable("user") { HomeScreen()}
@@ -167,14 +185,14 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             LaunchedEffect(userId) {
                                 eventsForPage = KtorClient.getMyEvents(userId!!).events
                             }
-                            FeedScreen(eventsForPage, navController)
+                            FeedScreen(eventsForPage, navController, false)
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");
 
                         }
                     }
-                    composable("search") { HomeScreen() }
+
                     composable("login") { LoginForm(navController, snackbarHostState, loginViewModel) }
                     composable("registrationPage") { RegistrationForm()}
                 }
