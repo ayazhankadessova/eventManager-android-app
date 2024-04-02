@@ -29,13 +29,39 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import java.util.Locale
 
 //import com.example.infoday.ui.theme.InfoDayTheme
 
+@Composable
+fun getScreenTitle(navController: NavController, items: List<String>): String {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.route?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
+        Locale.getDefault()) else it.toString() }
+    if (currentDestination != null) {
+        Log.i("Dest route: " , currentDestination)
+    }
+
+    if (currentDestination == "Event/{index}") {
+        return "Location"
+    } else if (currentDestination == "OneEvent/{_id}") {
+        return "Event Title"
+    } else if (currentDestination == "Search") {
+        return "Events"
+    } else if (currentDestination == "RegistrationPage") {
+        return "Become Volunteer"
+    } else if (currentDestination == "User") {
+        return "Registered Events"
+    }
+    val index = items.indexOf(currentDestination)
+    return if (index != -1) items[index] else "App"
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +112,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     }
                 },
                 title = {
-                    Text(items[selectedItem])
+                    Text(getScreenTitle(navController, items))
                 },
 
 
@@ -161,6 +187,8 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                                 registered =
                                     KtorClient.getEvent(eventId)?.volunteers?.contains(userId) ?: false
                             }
+
+
 
                             event?.let { EventPage(event!!, snackbarHostState, loggedIn, registered) }
                         } else {
