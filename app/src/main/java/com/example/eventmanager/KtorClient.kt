@@ -55,6 +55,29 @@ data class JoinRequest(val userId: String)
 @Serializable
 data class LoginResponse(val token: String)
 
+@Serializable
+data class RegistrationResponse(
+    val id: IdResponse
+)
+
+@Serializable
+data class IdResponse(
+    val acknowledged: Boolean,
+    val insertedId: String
+)
+
+@Serializable
+data class RegistrationRequest(
+    val email: String,
+    val password: String,
+    val name: String,
+    val contact: String,
+    val age_group: String,
+    val about: String,
+    val terms: String
+)
+
+
 
 object KtorClient {
 
@@ -110,7 +133,7 @@ object KtorClient {
         }
     }
 
-    suspend fun getMyEvents(id : String): ResponseNew {
+    suspend fun getMyEvents(id : String): ResponseNew? {
         try {
             Log.i("[Get My Events] Token", token)
             Log.i("[Get My Events] userId", id)
@@ -121,7 +144,7 @@ object KtorClient {
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            throw e // Re-throw the exception for caller to handle
+            return null // Re-throw the exception for caller to handle
         }
     }
 
@@ -191,40 +214,60 @@ object KtorClient {
 
     }
 
-    suspend fun getEvent(id: String?): Event {
+    suspend fun getEvent(id: String?): Event? {
         try {
             return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
                 .body()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            throw e // Re-throw the exception for caller to handle
+            return null // Re-throw the exception for caller to handle
         }
     }
 
+
+    suspend fun register(email: String, password: String, name: String, contact:String, age_group: String, about: String, terms:Boolean): String? {
+        try {
+            val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/volunteers/") {
+                contentType(ContentType.Application.Json)
+                setBody(RegistrationRequest(email,password, name, contact, age_group, about, terms.toString()))
+            }
+
+            Log.i("[Register]", response.toString())
+
+            if (response.status == HttpStatusCode.Created ) {
+                val insertedId: String = response.body<RegistrationResponse>().id.insertedId
+                Log.i("insertedId", insertedId)
+                return insertedId
+            } else {
+                return null
+            }
+        } catch (e: Exception) {
+            Log.e("[Register]", "Error during registration", e)
+            return null
+        }
+    }
 
     suspend fun login(email: String, password: String): String? {
+        try {
+            val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/login/") {
+                contentType(ContentType.Application.Json)
+                setBody(LoginRequest(email,password))
+            }
 
-//        val loginRequest = LoginRequest(email, password)
-        val response: HttpResponse = httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/login/") {
-            contentType(ContentType.Application.Json)
-            setBody(LoginRequest(email,password))
-        }
-
-        if (response.status == HttpStatusCode.OK) {
-            val tokenSet: String = response.body<LoginResponse>().token
-            token = tokenSet
-            Log.i("TOKEEEN", token)
-            return tokenSet
-
-        } else {
-
+            if (response.status == HttpStatusCode.OK) {
+                val tokenSet: String = response.body<LoginResponse>().token
+                token = tokenSet
+                Log.i("TOKEEEN", token)
+                return tokenSet
+            } else {
+                return null
+            }
+        } catch (e: Exception) {
+            Log.e("[Login]", "Error during login", e)
             return null
-
         }
     }
-
-
 
     @Serializable
     data class HttpBinResponse(

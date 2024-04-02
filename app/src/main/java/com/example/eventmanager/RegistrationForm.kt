@@ -1,9 +1,6 @@
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +30,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.eventmanager.Credentials
-import com.example.eventmanager.MainActivity
+import androidx.navigation.NavHostController
+import com.example.eventmanager.KtorClient
+import kotlinx.coroutines.launch
 
 data class RegistrationData(
     var email: String = "",
@@ -46,15 +48,8 @@ data class RegistrationData(
     }
 }
 
-fun checkRegData(creds: RegistrationData, context: Context): Boolean {
-    if (creds.isNotEmpty()) {
-        context.startActivity(Intent(context, MainActivity::class.java))
-        (context as Activity).finish()
-        return true
-    } else {
-        Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_SHORT).show()
-        return false
-    }
+fun checkRegData(creds: RegistrationData): Boolean {
+    return creds.isNotEmpty() && creds.terms
 }
 
 @Composable
@@ -83,7 +78,10 @@ fun RegistrationField(
 }
 
 @Composable
-fun RegistrationForm() {
+fun RegistrationForm(snackbarHostState: SnackbarHostState, navController: NavHostController) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     Surface {
         var registrationData by remember { mutableStateOf(RegistrationData()) }
         val context = LocalContext.current
@@ -138,16 +136,47 @@ fun RegistrationForm() {
                 modifier = Modifier.fillMaxWidth(),
             )
 
-
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = registrationData.terms,
+                    onCheckedChange = { isChecked ->
+                        registrationData = registrationData.copy(terms = isChecked)
+                    }
+                )
+                Text(
+                    text = "I agree to the Terms and Conditions",
+                    modifier = Modifier.padding(start = 8.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
-                    if (!checkRegData(registrationData, context)) {
-                        registrationData = RegistrationData()
-                    } else {
+                    if (!checkRegData(registrationData)) {
 
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Wrong inputs...")
+                        }
+                    } else {
+                        coroutineScope.launch {
+                            val stringBody: String? =
+                                KtorClient.register(registrationData.email, registrationData.password, registrationData.name, registrationData.contact, registrationData.ageGroup, registrationData.about, registrationData.terms)
+
+                            if (stringBody!= null) {
+                                snackbarHostState.showSnackbar("Succefully created new account: " + stringBody + "\nLogin with your new account.")
+                                navController.navigate("login")
+                            } else {
+                                snackbarHostState.showSnackbar("Error while creating new account.")
+                            }
+
+                        }
 
                     }
                 },

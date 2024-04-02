@@ -34,11 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -147,28 +149,31 @@ fun PasswordField(
 
 }
 
-fun checkCredentials(creds: Credentials, lifecycleOwner: LifecycleOwner) {
-    if (creds.isNotEmpty()) {
-        lifecycleOwner.lifecycleScope.launch {
-            val loginResult = login(creds.login, creds.pwd)
-            if (loginResult != null) {
-                val context = lifecycleOwner as Context
-                context.startActivity(Intent(context, MainActivity::class.java))
-                (context as Activity).finish()
-            } else {
-                Log.i("Cred empty", "NULL")
-            }
-        }
-    } else {
-        Log.i("Cred empty", "NULL")
-    }
-}
+//fun checkCredentials(creds: Credentials, lifecycleOwner: LifecycleOwner) {
+//    if (creds.isNotEmpty()) {
+//        lifecycleOwner.lifecycleScope.launch {
+//            val loginResult = login(creds.login, creds.pwd)
+//            if (loginResult != null) {
+//                val context = lifecycleOwner as Context
+//                context.startActivity(Intent(context, MainActivity::class.java))
+//                (context as Activity).finish()
+//            } else {
+//                Log.i("Cred empty", "NULL")
+//            }
+//        }
+//    } else {
+//        Log.i("Cred empty", "NULL")
+//    }
+//}
 
 //@Preview
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState, loginViewModel: LoginViewModel) {
     val dataStore = UserPreferences(LocalContext.current)
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
 
     val userId by dataStore.getUserId.collectAsState(initial = null)
 //    val lifecycleOwner = LocalLifecycleOwner.current
@@ -204,9 +209,11 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                     coroutineScope.launch {
                         val stringBody: String? = login(credentials.login, credentials.pwd)
 
+
                         if (stringBody != null) {
                             // go to main page
                             loginViewModel.logIn()
+                            keyboardController?.hide()
                             snackbarHostState.showSnackbar("Successful Login " + stringBody)
 
                             val jwt = JWT(stringBody)
@@ -219,8 +226,8 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                             }
                             navController.navigate("home")
                         } else {
+                            keyboardController?.hide()
                             snackbarHostState.showSnackbar("Error while logging in.")
-
                         }
                     }
                 },

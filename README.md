@@ -10,14 +10,17 @@ Next:
 
 - [x] Register 
 - [x] Unjoin Event
-- [ ] Search !!
+- [x] Search !!
 
 Later:
-- [ ] check if email is already taken
-- [ ] make pwd invisible
+- [x] check if email is already taken
 - [ ] get 6 on every page project screen
 - [ ] get 3 recent events on the feed page
+- [ ] fix top apps
 
+Login:
 
+- ayazhan5@gmail.com
+- 1234
 
-COntent negatiation & serialization : https://ktor.io/docs/serialization.html
+Content negatiation & serialization : https://ktor.io/docs/serialization.html
