@@ -114,6 +114,7 @@ object KtorClient {
         }
     }
 
+
     suspend fun joinEvent(eventId : String, userId: String): String {
         try {
 
@@ -143,6 +144,38 @@ object KtorClient {
             // Log the exception for better debugging
             // ...
             return "Error: unavailable or full quota!" // Re-throw the exception for caller to handle
+        }
+
+    }
+
+    suspend fun unRegister(eventId : String, userId: String): String {
+        try {
+
+            //        val loginRequest = LoginRequest(email, password)
+            Log.i("[Unregister] eventId:", eventId)
+            Log.i("[Unregister] userId", userId)
+            val response: HttpResponse =
+                httpClient.delete("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
+//                    contentType(ContentType.Application.Json)
+//                    setBody(JoinRequest(userId))
+                }
+
+            Log.i("[Unregister]", response.body())
+
+//            return response.toString()
+
+            if (response.status == HttpStatusCode.OK) {
+
+                return "Unregistered"
+
+            } else {
+
+                return "Error!"
+            }
+        } catch (e: Exception) {
+            // Log the exception for better debugging
+            // ...
+            return "Error!" // Re-throw the exception for caller to handle
         }
 
     }

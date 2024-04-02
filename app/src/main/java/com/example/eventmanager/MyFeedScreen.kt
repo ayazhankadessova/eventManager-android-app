@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -25,11 +24,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyFeedScreen(eventsForPage: List<Event>) {
+fun MyFeedScreen(eventsForPage: List<Event>, navController: NavHostController) {
 
 //    val lighterBorder = Color.Magenta
     val whiteBorder = Color.White
@@ -44,7 +44,10 @@ fun MyFeedScreen(eventsForPage: List<Event>) {
                     .border(
                         width = 5.dp,
                         color = if (isClicked.value) Color.Yellow else whiteBorder
-                    ),
+                    ).clickable {
+                    navController.navigate("oneEvent/${event._id}")
+                },
+
             ) {
                 Column {
                     AsyncImage(

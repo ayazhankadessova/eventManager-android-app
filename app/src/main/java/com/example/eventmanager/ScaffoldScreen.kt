@@ -53,7 +53,14 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
     var items = if (loggedIn) listOf("Home", "Events", "Search", "User") else listOf("Home", "Events", "Search", "Login")
 
 
-    val feeds by produceState(
+    val events by produceState(
+        initialValue = emptyList<Event>(),
+        producer = {
+            value = KtorClient.getEvents().events
+        }
+    )
+
+    val response by produceState(
         initialValue = Response(listOf<Event>(), null, null, null),
         producer = {
             value = KtorClient.getEvents()
@@ -109,8 +116,8 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     startDestination = "home",
                 ) {
                     // mapping of routes and what screens will be shown
-                    composable("home") { FeedScreen(response = feeds) }
-                    composable("events"){ EventScreen(feeds, navController)}
+                    composable("home") { FeedScreen(events, navController) }
+                    composable("events"){ EventScreen(response, navController)}
 //                    composable("user") { HomeScreen()}
 //
 
@@ -134,7 +141,13 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             LaunchedEffect(eventId) {
                                 event = KtorClient.getEvent(eventId)
                             }
-                            event?.let { EventPage(event!!, snackbarHostState, loggedIn) }
+
+                            var registered by remember { mutableStateOf<Boolean>(false) }
+                            LaunchedEffect(eventId) {
+                                registered = KtorClient.getEvent(eventId).volunteers.contains(userId)
+                            }
+
+                            event?.let { EventPage(event!!, snackbarHostState, loggedIn, registered) }
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");
@@ -151,7 +164,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             LaunchedEffect(userId) {
                                 eventsForPage = KtorClient.getMyEvents(userId!!).events
                             }
-                            MyFeedScreen(eventsForPage)
+                            FeedScreen(eventsForPage, navController)
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");

@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Boolean) {
+fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Boolean, registered : Boolean) {
 
     val dataStore = UserPreferences(LocalContext.current)
     val userId by dataStore.getUserId.collectAsState(initial = null)
@@ -112,30 +112,59 @@ fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Bool
             }
 
             if (loggedIn) {
+                if (registered) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        val res = userId?.let { KtorClient.joinEvent(event._id, it) }
 
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Button(
-                            onClick = {
-                                coroutineScope.launch {
-                                    val res = userId?.let { KtorClient.joinEvent(event._id, it) }
-
-                                    if (res != null) {
-                                        snackbarHostState.showSnackbar(res)
+                                        if (res != null) {
+                                            snackbarHostState.showSnackbar(res)
+                                        }
                                     }
-                                }
-                            },
-                            shape = RoundedCornerShape(5.dp),
+                                },
+                                shape = RoundedCornerShape(5.dp),
 
-                            ) {
-                            Text("Join Event")
+                                ) {
+                                Text("Join Event")
+                            }
                         }
+                    } // box
+                } else {
 
-                    }
-                } // box
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        val res = userId?.let { KtorClient.unRegister(event._id, it) }
+
+                                        if (res == "Unregistered" || res == "Error!") {
+                                            snackbarHostState.showSnackbar(res)
+                                            // check button text to "Unregistered
+                                        }
+                                    }
+                                },
+                                shape = RoundedCornerShape(5.dp),
+
+                                ) {
+                                Text("Unregister")
+                            }
+                        }
+                    } // box
+
+                }
+
+
+
             } // logged in
 
         }
