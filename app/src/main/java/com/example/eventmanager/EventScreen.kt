@@ -17,19 +17,18 @@ import androidx.navigation.NavHostController
 fun EventScreen(response: Response, navController: NavHostController) {
     val eventsNum = response.perPage?.let { response.total?.div(it) }
     val scrollState = rememberScrollState()
+    val page:Int = 1
 
     Column(modifier = Modifier.verticalScroll(scrollState)) {
-        if (eventsNum != null) {
-            repeat(eventsNum) { index ->
-                ListItem(
-                    headlineContent = { Text("${index+1}") },
-                    // go to event page
-                    modifier = Modifier.clickable {
-                        navController.navigate("event/${index + 1}")
-                    },
-                )
-                Divider()
-            }
+        repeat(10) { index ->  // Repeat for numbers 0 to 9
+            ListItem(
+                headlineContent = { Text("${index+1}") },
+                // go to event page
+                modifier = Modifier.clickable {
+                    navController.navigate("event/${index + 1}/${page}")
+                },
+            )
+            Divider()
         }
     }
 }

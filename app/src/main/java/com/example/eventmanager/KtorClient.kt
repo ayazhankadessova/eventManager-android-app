@@ -111,9 +111,9 @@ object KtorClient {
         }
     }
 
-    suspend fun getEventsPage(number : Int): Response {
+    suspend fun getEventsLocation(page: Int, location: String?): Response {
         try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=$number")
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=$page&location=$location")
                 .body<Response>()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging

@@ -161,14 +161,16 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
 //                    composable("user") { HomeScreen()}
 //
 
-                    composable("event/{index}") { backStackEntry ->
-                        val index = backStackEntry.arguments?.getString("index")?.toIntOrNull()
-                        if (index != null) {
-                            var eventsForPage by remember { mutableStateOf(listOf<Event>()) }
-                            LaunchedEffect(index) {
-                                eventsForPage = KtorClient.getEventsPage(index).events
+                    composable("event/{index}/{page}") { backStackEntry ->
+                        val location : String? = backStackEntry.arguments?.getString("index")
+                        val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
+                        backStackEntry.arguments?.toString()?.let { Log.i("index", it) }
+                        if (location != null && page !=null) {
+                            var eventsForLocRes by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
+                            LaunchedEffect(location) {
+                                eventsForLocRes = KtorClient.getEventsLocation(page, location)
                             }
-                            EventPageScreen(eventsForPage, navController, index.toString())
+                            EventPageScreen(eventsForLocRes, navController, location.toString(), page)
                         } else {
                             // Handle the case where index is null
                         }
