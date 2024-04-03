@@ -1,4 +1,7 @@
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +14,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -50,6 +59,53 @@ data class RegistrationData(
 
 fun checkRegData(creds: RegistrationData): Boolean {
     return creds.isNotEmpty() && creds.terms
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AgeGroupExposedDropdown(onAgeGroupChange: (String) -> Unit) {
+    val context = LocalContext.current
+    val ageGroups = arrayOf("15-18", "18-21", "21-30", "30-50", "50+")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf(ageGroups[0]) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                value = selectedText,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor().fillMaxWidth() // Modified modifier here
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth() // Modified modifier here
+            ) {
+                ageGroups.forEach { group ->
+                    DropdownMenuItem(
+                        text = { Text(text = group) },
+                        onClick = {
+                            selectedText = group
+                            expanded = false
+                            onAgeGroupChange(group)
+                            Toast.makeText(context, group, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -121,12 +177,8 @@ fun RegistrationForm(snackbarHostState: SnackbarHostState, navController: NavHos
                 placeholder = "Enter your Contact",
                 modifier = Modifier.fillMaxWidth()
             )
-            RegistrationField(
-                value = registrationData.ageGroup,
-                onChange = { data -> registrationData = registrationData.copy(ageGroup = data) },
-                label = "Age Group",
-                placeholder = "Enter your Age Group",
-                modifier = Modifier.fillMaxWidth()
+            AgeGroupExposedDropdown(
+                onAgeGroupChange = { data -> registrationData = registrationData.copy(ageGroup = data) }
             )
             RegistrationField(
                 value = registrationData.about,
@@ -154,7 +206,6 @@ fun RegistrationForm(snackbarHostState: SnackbarHostState, navController: NavHos
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(

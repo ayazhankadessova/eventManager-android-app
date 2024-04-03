@@ -48,7 +48,7 @@ fun getScreenTitle(navController: NavController, items: List<String>): String {
         Log.i("Dest route: " , currentDestination)
     }
 
-    if (currentDestination == "Event/{index}") {
+    if (currentDestination == "Event/{index}/{page}") {
         return "Location"
     } else if (currentDestination == "OneEvent/{_id}") {
         return "Event Title"
