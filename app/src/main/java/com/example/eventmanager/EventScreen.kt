@@ -14,8 +14,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventScreen(response: Response, navController: NavHostController) {
-    val eventsNum = response.perPage?.let { response.total?.div(it) }
+fun EventScreen(navController: NavHostController) {
     val scrollState = rememberScrollState()
     val page:Int = 1
 

@@ -6,11 +6,13 @@ BUGS:
 2. Imtegrate with Unregister
 3. Integrate show My Events
 4. Age group drop down !!!
+5. Home page pagination
 
 - [x] show one event
 - [x] Register Page
 - [x] Authorize
 - [x] Add join event
+- [x] Events Page by Location Paginated
 
 - [x] Register 
 - [x] Unjoin Event
@@ -22,6 +24,8 @@ Later:
 - [ ] get 3 recent events on the feed page
 - [ ] fix top apps
 - Reg/unreg !!!
+
+- Test (all pages)
 
 Login:
 

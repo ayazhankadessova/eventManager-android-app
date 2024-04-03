@@ -100,9 +100,9 @@ object KtorClient {
     }
     // Note that we're using suspend functions to enable asynchronous programming in Kotlin.
 // This allows us to write cleaner, more concise code that's easier to read and maintain.
-    suspend fun getEvents(): Response {
+    suspend fun getEvents(page: Int): Response {
         try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events")
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events?page=$page")
                 .body<Response>()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging
@@ -122,9 +122,9 @@ object KtorClient {
         }
     }
 
-    suspend fun getEventsSearch(query : String): Response {
+    suspend fun getEventsSearch(query : String, page: Int): Response {
         try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?search=$query")
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?search=$query&page=$page")
                 .body<Response>()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging
