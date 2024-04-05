@@ -189,7 +189,7 @@ object KtorClient {
             Log.i("[Unregister] eventId:", eventId)
             Log.i("[Unregister] userId", userId)
             val response: HttpResponse =
-                httpClient.delete("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
+                httpClient.delete("https://comp4107-spring2024.azurewebsites.net/api/events/$userId/volunteers/") {
 //                    contentType(ContentType.Application.Json)
 //                    setBody(JoinRequest(userId))
                 }
