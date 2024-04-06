@@ -1,8 +1,5 @@
 package com.example.eventmanager
 
-import android.app.Activity
-import android.content.Intent
-import android.content.Context
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import androidx.compose.foundation.clickable
@@ -27,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,18 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.example.eventmanager.KtorClient.login
-import com.google.common.net.MediaType.JWT
 import kotlinx.coroutines.launch
 
 
@@ -173,13 +164,8 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
     val dataStore = UserPreferences(LocalContext.current)
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-
-
-    val userId by dataStore.getUserId.collectAsState(initial = null)
-//    val lifecycleOwner = LocalLifecycleOwner.current
     Surface {
         var credentials by remember { mutableStateOf(Credentials()) }
-        val context = LocalContext.current
 
         Column(
             verticalArrangement = Arrangement.Center,
