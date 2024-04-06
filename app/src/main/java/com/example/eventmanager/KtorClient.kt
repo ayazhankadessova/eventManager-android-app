@@ -49,8 +49,6 @@ data class ResponseNew(
 @Serializable
 data class LoginRequest(val email: String, val password: String)
 
-@Serializable
-data class JoinRequest(val userId: String)
 
 @Serializable
 data class LoginResponse(val token: String)
@@ -123,9 +121,12 @@ object KtorClient {
     }
 
     suspend fun getEventsSearch(query : String, page: Int): Response {
-        try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?search=$query&page=$page")
+        return try {
+//            Log.i("[Get My Events] userId", id)
+            val response: Response = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=$page&search=$query")
                 .body<Response>()// Access the list of events from the parsed Response object
+            Log.i("[Get Event Search] userId", response.toString())
+            return response
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
@@ -134,17 +135,17 @@ object KtorClient {
     }
 
     suspend fun getMyEvents(id : String): ResponseNew? {
-        try {
+        return try {
             Log.i("[Get My Events] Token", token)
             Log.i("[Get My Events] userId", id)
-            val ResponseNew = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
+            val responseNew = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
                 .body<ResponseNew>()// Access the list of events from the parsed Response object
-            Log.i("REPONSE New", ResponseNew.toString())
-            return ResponseNew
+            Log.i("REPONSE New", responseNew.toString())
+            responseNew
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            return null // Re-throw the exception for caller to handle
+            null // Re-throw the exception for caller to handle
         }
     }
 
@@ -165,13 +166,14 @@ object KtorClient {
 
 //            return response.toString()
 
-            if (response.status == HttpStatusCode.OK) {
+            return if (response.status == HttpStatusCode.OK) {
+                // event if join twice, ok
 
-                return "Event Joined"
+                "Event Joined."
 
             } else {
 
-                return "Error: unavailable or full quota!"
+                "Error: unavailable or full quota!"
 
             }
         } catch (e: Exception) {
@@ -198,13 +200,13 @@ object KtorClient {
 
 //            return response.toString()
 
-            if (response.status == HttpStatusCode.OK) {
+            return if (response.status == HttpStatusCode.OK) {
 
-                return "Unregistered"
+                "Unregistered"
 
             } else {
 
-                return "Error!"
+                "Error!"
             }
         } catch (e: Exception) {
             // Log the exception for better debugging
@@ -215,13 +217,13 @@ object KtorClient {
     }
 
     suspend fun getEvent(id: String?): Event? {
-        try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
+        return try {
+            httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
                 .body()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            return null // Re-throw the exception for caller to handle
+            null // Re-throw the exception for caller to handle
         }
     }
 
@@ -235,12 +237,12 @@ object KtorClient {
 
             Log.i("[Register]", response.toString())
 
-            if (response.status == HttpStatusCode.Created ) {
+            return if (response.status == HttpStatusCode.Created ) {
                 val insertedId: String = response.body<RegistrationResponse>().id.insertedId
                 Log.i("insertedId", insertedId)
-                return insertedId
+                insertedId
             } else {
-                return null
+                null
             }
         } catch (e: Exception) {
             Log.e("[Register]", "Error during registration", e)
@@ -255,13 +257,13 @@ object KtorClient {
                 setBody(LoginRequest(email,password))
             }
 
-            if (response.status == HttpStatusCode.OK) {
+            return if (response.status == HttpStatusCode.OK) {
                 val tokenSet: String = response.body<LoginResponse>().token
                 token = tokenSet
                 Log.i("TOKEEEN", token)
-                return tokenSet
+                tokenSet
             } else {
-                return null
+                null
             }
         } catch (e: Exception) {
             Log.e("[Login]", "Error during login", e)
@@ -269,17 +271,6 @@ object KtorClient {
         }
     }
 
-    @Serializable
-    data class HttpBinResponse(
-        val args: Map<String, String>,
-        val data: String,
-        val files: Map<String, String>,
-        val form: Map<String, String>,
-        val headers: Map<String, String>,
-        val json: String?,
-        val origin: String,
-        val url: String
-    )
 
     /*
     The X-Amzn-Trace-Id header is commonly used for distributed

@@ -152,11 +152,45 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     // mapping of routes and what screens will be shown
                     composable("home") {
                         selectedItem = 0
-                        FeedScreen(response, navController, false, 1)
+                        FeedScreen(response, navController, false, 1, "")
+                    }
+                    composable("home/{page}") {backStackEntry ->
+                        selectedItem = 0
+                        val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
+                        backStackEntry.arguments?.toString()?.let { Log.i("index", it) }
+                        if (page !=null) {
+                            var eventsForPage by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
+                            LaunchedEffect(page) {
+                                eventsForPage  = KtorClient.getEvents(page)
+                            }
+                            FeedScreen(eventsForPage, navController, false, page, "")
+//                            EventPageScreen(eventsForLocRes, navController, location.toString(), page)
+                        } else {
+                            // Handle the case where index is null
+                        }
+
                     }
                     composable("search") {
-                        FeedScreen(response, navController, true, 1)
+                        FeedScreen(response, navController, true, 1, "")
                     }
+
+                    composable("search/{query}/{page}") { backStackEntry ->
+                        val query : String? = backStackEntry.arguments?.getString("query")
+                        val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
+                        backStackEntry.arguments?.toString()?.let { Log.i("query", it) }
+                        if (query != null && page !=null) {
+                            var eventsForQuery by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
+                            LaunchedEffect(query) {
+                                eventsForQuery= KtorClient.getEventsSearch(query, page)
+                                Log.i("EVENTSFORQUERY", eventsForQuery.toString())
+                            }
+                            FeedScreen(eventsForQuery, navController, true, page, query)
+                        } else {
+                            // Handle the case where index is null
+                        }
+                    }
+
+
                     composable("events"){ EventScreen(navController)}
 //                    composable("user") { HomeScreen()}
 //

@@ -212,7 +212,7 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                             if (userId != null) {
                                 dataStore.saveUserId(userId)
                             }
-                            navController.navigate("home")
+                            navController.navigate("home/1")
                         } else {
                             keyboardController?.hide()
                             snackbarHostState.showSnackbar("Error while logging in.")

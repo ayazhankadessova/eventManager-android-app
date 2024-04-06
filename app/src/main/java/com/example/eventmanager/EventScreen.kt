@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 @Composable
 fun EventScreen(navController: NavHostController) {
     val scrollState = rememberScrollState()
-    val page:Int = 1
+    val page = 1
 
     Column(modifier = Modifier.verticalScroll(scrollState)) {
         repeat(10) { index ->  // Repeat for numbers 0 to 9
