@@ -36,8 +36,6 @@ fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Bool
     val userId by dataStore.getUserId.collectAsState(initial = null)
     val coroutineScope = rememberCoroutineScope()
 
-//    var loggedIn:Boolean = userId != null
-
     LazyColumn {
         item {
             Card(
@@ -118,6 +116,8 @@ fun EventPage(event: Event, snackbarHostState: SnackbarHostState, loggedIn: Bool
 
                                         if (res != null) {
                                             snackbarHostState.showSnackbar(res)
+                                        } else {
+                                            snackbarHostState.showSnackbar("Error. Quota is full.")
                                         }
                                     }
                                 },

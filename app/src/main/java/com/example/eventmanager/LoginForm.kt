@@ -99,32 +99,10 @@ fun PasswordField(
     placeholder: String = "Enter your Password"
 ) {
 
-//    var isPasswordVisible by remember { mutableStateOf(false) }
-
-//    val leadingIcon = @Composable {
-//        Icon(
-//            Icons.Filled.,
-//            contentDescription = "",
-//            tint = MaterialTheme.colorScheme.primary
-//        )
-//    }
-//    val trailingIcon = @Composable {
-//        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-//            Icon(
-//                if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-//                contentDescription = "",
-//                tint = MaterialTheme.colorScheme.primary
-//            )
-//        }
-//    }
-
-
     TextField(
         value = value,
         onValueChange = onChange,
         modifier = modifier,
-//        leadingIcon = leadingIcon,
-//        trailingIcon = trailingIcon,
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Password
@@ -135,29 +113,10 @@ fun PasswordField(
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-//        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
 
 }
 
-//fun checkCredentials(creds: Credentials, lifecycleOwner: LifecycleOwner) {
-//    if (creds.isNotEmpty()) {
-//        lifecycleOwner.lifecycleScope.launch {
-//            val loginResult = login(creds.login, creds.pwd)
-//            if (loginResult != null) {
-//                val context = lifecycleOwner as Context
-//                context.startActivity(Intent(context, MainActivity::class.java))
-//                (context as Activity).finish()
-//            } else {
-//                Log.i("Cred empty", "NULL")
-//            }
-//        }
-//    } else {
-//        Log.i("Cred empty", "NULL")
-//    }
-//}
-
-//@Preview
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState, loginViewModel: LoginViewModel) {

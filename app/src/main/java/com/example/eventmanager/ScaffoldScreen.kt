@@ -173,27 +173,8 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     composable("search") {
                         FeedScreen(response, navController, true, 1, "")
                     }
-//
-//                    composable("search/{query}/{page}") { backStackEntry ->
-//                        val query : String? = backStackEntry.arguments?.getString("query")
-//                        val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
-//                        backStackEntry.arguments?.toString()?.let { Log.i("query", it) }
-//                        if (query != null && page !=null) {
-//                            var eventsForQuery by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
-//                            LaunchedEffect(query) {
-//                                eventsForQuery= KtorClient.getEventsSearch(query, page)
-//                                Log.i("EVENTSFORQUERY", eventsForQuery.toString())
-//                            }
-//                            FeedScreen(eventsForQuery, navController, true, page, query)
-//                        } else {
-//                            // Handle the case where index is null
-//                        }
-//                    }
-
 
                     composable("events"){ EventScreen(navController)}
-//                    composable("user") { HomeScreen()}
-//
 
                     composable("event/{index}/{page}") { backStackEntry ->
                         val location : String? = backStackEntry.arguments?.getString("index")
@@ -234,9 +215,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                         }
                     }
                     composable("user") {
-//                        val dataStore = UserPreferences(LocalContext.current)
-//                        val userId by dataStore.getUserId.collectAsState(initial = null)
-//                        Log.i(backStackEntry.arguments?.toString(), "check")
                         if (userId != null) {
 
                             var eventsForPage by remember { mutableStateOf(listOf<Event>()) }
@@ -258,11 +236,3 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
         }
     )
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun ScaffoldScreenPreview() {
-//    InfoDayTheme {
-//        ScaffoldScreen()
-//    }
-//}

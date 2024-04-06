@@ -31,7 +31,6 @@ import coil.compose.AsyncImage
 @Composable
 fun MyFeedScreen(eventsForPage: List<Event>, navController: NavHostController) {
 
-//    val lighterBorder = Color.Magenta
     val whiteBorder = Color.White
     LazyColumn {
         items(eventsForPage) { event ->

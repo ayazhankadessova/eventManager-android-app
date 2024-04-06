@@ -97,7 +97,7 @@ object KtorClient {
         expectSuccess = true
     }
     // Note that we're using suspend functions to enable asynchronous programming in Kotlin.
-// This allows us to write cleaner, more concise code that's easier to read and maintain.
+    // This allows us to write cleaner, more concise code that's easier to read and maintain.
     suspend fun getEvents(page: Int): Response {
         try {
             return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events?page=$page")
@@ -105,7 +105,8 @@ object KtorClient {
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            throw e // Re-throw the exception for caller to handle
+//            throw e // Re-throw the exception for caller to handle
+            return Response(listOf<Event>(), null, null, null)
         }
     }
 
@@ -116,7 +117,8 @@ object KtorClient {
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            throw e // Re-throw the exception for caller to handle
+//            throw e // Re-throw the exception for caller to handle
+            return Response(listOf<Event>(), null, null, null)
         }
     }
 
@@ -130,7 +132,8 @@ object KtorClient {
         } catch (e: Exception) {
             // Log the exception for better debugging
             // ...
-            throw e // Re-throw the exception for caller to handle
+//            throw e // Re-throw the exception for caller to handle
+            return Response(listOf<Event>(), null, null, null)
         }
     }
 
@@ -158,13 +161,9 @@ object KtorClient {
             Log.i("[Join Event] userId", userId)
             val response: HttpResponse =
                 httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
-//                    contentType(ContentType.Application.Json)
-//                    setBody(JoinRequest(userId))
                 }
 
             Log.i("[Join Event]", response.body())
-
-//            return response.toString()
 
             return if (response.status == HttpStatusCode.OK) {
                 // event if join twice, ok
@@ -178,7 +177,6 @@ object KtorClient {
             }
         } catch (e: Exception) {
             // Log the exception for better debugging
-            // ...
             return "Error: unavailable or full quota!" // Re-throw the exception for caller to handle
         }
 
@@ -186,19 +184,14 @@ object KtorClient {
 
     suspend fun unRegister(eventId : String, userId: String): String {
         try {
-
             //        val loginRequest = LoginRequest(email, password)
             Log.i("[Unregister] eventId:", eventId)
             Log.i("[Unregister] userId", userId)
             val response: HttpResponse =
                 httpClient.delete("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
-//                    contentType(ContentType.Application.Json)
-//                    setBody(JoinRequest(userId))
                 }
 
             Log.i("[Unregister]", response.body())
-
-//            return response.toString()
 
             return if (response.status == HttpStatusCode.OK) {
 
@@ -210,7 +203,6 @@ object KtorClient {
             }
         } catch (e: Exception) {
             // Log the exception for better debugging
-            // ...
             return "Error!" // Re-throw the exception for caller to handle
         }
 
@@ -221,8 +213,6 @@ object KtorClient {
             httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/$id")
                 .body()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
-            // Log the exception for better debugging
-            // ...
             null // Re-throw the exception for caller to handle
         }
     }
@@ -245,7 +235,7 @@ object KtorClient {
                 null
             }
         } catch (e: Exception) {
-            Log.e("[Register]", "Error during registration", e)
+            Log.e("[Register]", "Error during registration.", e)
             return null
         }
     }
@@ -270,17 +260,6 @@ object KtorClient {
             return null
         }
     }
-
-
-    /*
-    The X-Amzn-Trace-Id header is commonly used for distributed
-    tracing in AWS (Amazon Web Services) applications. It helps track
-    requests as they flow through different services and components in a
-    distributed system. Storing the X-Amzn-Trace-Id in the token property
-    allows you to access and reference it later for any further tracking or debugging purposes.
-    After storing the X-Amzn-Trace-Id header, the function returns the string representation
-    of the response.
-     */
 
 
 }

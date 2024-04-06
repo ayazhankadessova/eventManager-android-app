@@ -36,6 +36,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.runtime.*
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,39 +97,9 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
             )
 
             LazyColumn {
-                items(events) { event ->
+                items(events) {
 
-                    Card (
-                        onClick = { navController.navigate("oneEvent/${event._id}") },
-                        modifier = Modifier
-                            .fillMaxWidth().height(200.dp)
-                    ) {
-                        Column {
-                            AsyncImage(
-                                model = event.image,
-                                contentDescription = "Home page Picture",
-                                modifier = Modifier
-                                    .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
-                            )
-                        }
-                    }
-                    Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) {
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = event.title,
-                                style = TextStyle(fontSize = 20.sp),
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = event.organiser,
-                                style = TextStyle(fontSize = 15.sp, color = Color.Gray),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
+                    event -> fetchEvent(event, navController)
                 }
                 item {
 
@@ -179,49 +150,17 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
             if (events.isEmpty()) {
                 events = eventsForPage.events
             }
-            items(events) { event ->
-
-                Card (
-                    onClick = { navController.navigate("oneEvent/${event._id}") },
-                    modifier = Modifier
-                        .fillMaxWidth().height(200.dp)
-                ) {
-                    Column {
-                        AsyncImage(
-                            model = event.image,
-                            contentDescription = "Home page Picture",
-                            modifier = Modifier
-                                .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
-                        )
-                    }
-                }
-                Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = event.title,
-                            style = TextStyle(fontSize = 20.sp),
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = event.organiser,
-                            style = TextStyle(fontSize = 15.sp, color = Color.Gray),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
+            items(events) {
+                event -> fetchEvent(event, navController)
 
             }
 
-            var totalPages = eventsForPage.total?.div(eventsForPage.perPage!!)
             // Pagination here
-            if (totalPages != null) {
+            if (totalPagesSearch != null) {
 
                 item {
-                    Log.i("TOTAL PAGES", totalPages.toString())
-                    if (totalPages >=1) {
+                    Log.i("TOTAL PAGES", totalPagesSearch.toString())
+                    if (totalPagesSearch >=1) {
 
                         Row(
                             modifier = Modifier
@@ -239,7 +178,7 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                                 }
                                 Text("...")
                             }
-                            val endPage = min(totalPages, currentPage + 2)
+                            val endPage = min(totalPagesSearch, currentPage + 2)
                             for (i in startPage..endPage) {
                                 Button(onClick = {
                                     currentPage = i
@@ -247,12 +186,12 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                                     Text("$i")
                                 }
                             }
-                            if (endPage < totalPages) {
+                            if (endPage < totalPagesSearch) {
                                 Text("...")
                                 Button(onClick = {
-                                    currentPage = totalPages
-                                    coroutineScope.launch { events = KtorClient.getEvents(totalPages).events } }) {
-                                    Text("$totalPages")
+                                    currentPage = totalPagesSearch
+                                    coroutineScope.launch { events = KtorClient.getEvents(totalPagesSearch).events } }) {
+                                    Text("$totalPagesSearch")
                                 }
                             }
                         }
@@ -263,3 +202,40 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
       }
     }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun fetchEvent(event: Event, navController:NavController) {
+
+    Card (
+        onClick = { navController.navigate("oneEvent/${event._id}") },
+        modifier = Modifier
+            .fillMaxWidth().height(200.dp)
+    ) {
+        Column {
+            AsyncImage(
+                model = event.image,
+                contentDescription = "Home page Picture",
+                modifier = Modifier
+                    .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
+            )
+        }
+    }
+    Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = event.title,
+                style = TextStyle(fontSize = 20.sp),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = event.organiser,
+                style = TextStyle(fontSize = 15.sp, color = Color.Gray),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
+}

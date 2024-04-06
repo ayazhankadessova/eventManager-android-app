@@ -19,7 +19,7 @@ fun EventScreen(navController: NavHostController) {
     val page = 1
 
     Column(modifier = Modifier.verticalScroll(scrollState)) {
-        repeat(10) { index ->  // Repeat for numbers 0 to 9
+        repeat(9) { index ->  // Repeat for numbers 0 to 9
             ListItem(
                 headlineContent = { Text("${index+1}") },
                 // go to event page
@@ -31,46 +31,3 @@ fun EventScreen(navController: NavHostController) {
         }
     }
 }
-
-//@Composable
-//fun EventScreen(snackbarHostState: SnackbarHostState, deptId: String?) {
-//
-//    val eventDao = EventDatabase.getInstance(LocalContext.current).eventDao()
-////    The events variable represents the current value of the LiveData and is updated whenever there are changes in the observed data.
-//    val events by eventDao.getAll().observeAsState(listOf())
-//    val coroutineScope = rememberCoroutineScope()
-//
-//    LazyColumn {
-//        items(events) { event ->
-//            ListItem(
-//                headlineContent = { Text(event.title) },
-//                // listItem is wrapped in pointerInput which allows us to detectGestures
-//                modifier = Modifier.pointerInput(Unit) {
-//                    // detect Tap gestures helps us specify action to tale when longPress is detected
-////                    detectTapGestures(
-////                        onLongPress = {
-////                            coroutineScope.launch {
-////                                event.saved = true
-////                                eventDao.update(event)
-////                                snackbarHostState.showSnackbar(
-////                                    "Event has been added to itinerary."
-////                                )
-////                            }
-////                        }
-////                    )
-//                }
-//            )
-//            Divider()
-//        }
-//    }
-//}
-
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun FeedPreview() {
-//    EventManagerTheme {
-//        EventScreen(Event.data)
-//    }
-//}
