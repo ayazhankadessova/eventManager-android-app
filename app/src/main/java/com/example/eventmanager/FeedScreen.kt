@@ -218,26 +218,42 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
             var totalPages = eventsForPage.total?.div(eventsForPage.perPage!!)
             // Pagination here
             if (totalPages != null) {
+
                 item {
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        // Button to navigate to the first page
-                        val startPage = kotlin.math.max(1, page - 2)
-                        if (startPage > 1) {
-                            Button(onClick = { navController.navigate("home/1") }) {
-                                Text("1")
+                    Log.i("TOTAL PAGES", totalPages.toString())
+                    if (totalPages >=1) {
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth().padding(10.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            val startPage = max(1, currentPage - 2)
+                            if (startPage > 1) {
+                                Button(onClick = {
+                                    currentPage = 1
+                                    coroutineScope.launch { events = KtorClient.getEvents(1).events } }) {
+                                    Text("1")
+                                }
+                                Text("...")
                             }
-                            Text("...")
-                        }
-                        val endPage = kotlin.math.min(totalPages, page + 2)
-                        for (i in startPage..endPage) {
-                            Button(onClick = { navController.navigate("home/${i}") }) {
-                                Text("$i")
+                            val endPage = min(totalPages, currentPage + 2)
+                            for (i in startPage..endPage) {
+                                Button(onClick = {
+                                    currentPage = i
+                                    coroutineScope.launch { events = KtorClient.getEvents(i).events } }) {
+                                    Text("$i")
+                                }
                             }
-                        }
-                        if (endPage < totalPages) {
-                            Text("...")
-                            Button(onClick = { navController.navigate("home/${totalPages}") }) {
-                                Text("$totalPages")
+                            if (endPage < totalPages) {
+                                Text("...")
+                                Button(onClick = {
+                                    currentPage = totalPages
+                                    coroutineScope.launch { events = KtorClient.getEvents(totalPages).events } }) {
+                                    Text("$totalPages")
+                                }
                             }
                         }
                     }
