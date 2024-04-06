@@ -214,7 +214,9 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                             // go to main page
                             loginViewModel.logIn()
                             keyboardController?.hide()
-                            snackbarHostState.showSnackbar("Successful Login " + stringBody)
+//                            snackbarHostState.showSnackbar("Successful Login " + stringBody)
+                            snackbarHostState.showSnackbar("Successful Login...\nWait a moment. ")
+
 
                             val jwt = JWT(stringBody)
                             val userId: String? = jwt.getClaim("_id").asString()
