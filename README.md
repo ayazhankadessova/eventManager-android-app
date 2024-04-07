@@ -1,13 +1,15 @@
-![Now in Android](docs/images/nia-splash.jpg 'Event Manager')
+### 21204276
 
-<a href="https://play.google.com/store/apps/details?id=com.google.samples.apps.nowinandroid"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70"></a>
-
-# Now in Android App
+## Event Manager
 
 It is a **work in progress** 🚧.
 
 **Event Manager** is a functional Android app built entirely with Kotlin and Jetpack Compose. It
 follows Android design and development best practices and is intended to be a useful practice. As a running app, it's intended to help volunteers search for events, as well as join/unjoin events offered by HKBU.
+
+## Screenshots
+
+<img src="ScreenShots/Home.png" alt="Home Screen" width="200" /><img src="ScreenShots/Home_Pagination.png" alt="Home Screen" width="200" /><img src="ScreenShots/Search_te.png" alt="Home Screen" width="200" /><img src="ScreenShots/BecomeVol.png" alt="Home Screen" width="200" /><img src="ScreenShots/Login.png" alt="Home Screen" width="200" /><img src="ScreenShots/Events_1-9.png" alt="Home Screen" width="200" /><img src="ScreenShots/Location_1.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event_LoggedIn.png" alt="Home Screen" width="200" /><img src="ScreenShots/EventJoined.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregister.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregistered.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event.png" alt="Home Screen" width="200" /><img src="ScreenShots/RegisteredEvents.png" alt="Home Screen" width="200" />
 
 ## 1. API
 
@@ -156,8 +158,16 @@ NavHost(
 
 `FeedScreen` and `fetchEvent` composable functions are responsible for displaying the feed of events, highlighted are shown first, and individual event items, respectively. Let's take a closer look at how each of these functions works and how they get updated.
 
-![Home Screen](ScreenShots/Home.png)
+### Home Screen
 
+<p float="left">
+  <img src="ScreenShots/Home.png" alt="Home Screen" width="200" />
+  <img src="ScreenShots/Home_Pagination.png" alt="Home Screen" width="200" /> 
+</p>
+
+### Search Screen
+
+<img src="ScreenShots/Search_te.png" alt="Home Screen" width="200" />
 
 ### 4.1. Params
 
@@ -185,7 +195,9 @@ The `fetchEvent` function is responsible for rendering an individual event item 
 
 The code utilizes coroutines to perform asynchronous operations. The `rememberCoroutineScope` function is used to create a coroutine scope that is remembered across recompositions. The `launch` function is used to launch a coroutine and perform the API requests asynchronously for better user experience. The `events` state variable is updated inside the coroutine with the results obtained from the API.
 
-## 5. Registration - Become Volunteer
+## 5. Registration - Become volunteer
+
+<img src="ScreenShots/BecomeVol.png" alt="Home Screen" width="200" />
 
 The `RegistrationForm` composable function represents a registration form UI. If users don't have an account, they can create one.
 
@@ -319,6 +331,8 @@ coroutineScope.launch {
 
 ## 6. Login Form
 
+<img src="ScreenShots/Login.png" alt="Home Screen" width="200" />
+
 This is Login Screen, where users will usually navigate after the `Home` or `Become Volunteer` Screen.
 
 1. Login Form:
@@ -340,6 +354,8 @@ The `LoginForm` composable interacts with the `LoginViewModel` and `UserPreferen
 - The `getUserId` property in `UserPreferences` provides a `Flow` of the user ID, allowing other parts of the application to observe changes to the user ID and make requests using it.
 
 ## 7. Location Page
+
+<img src="ScreenShots/Events_1-9.png" alt="Home Screen" width="200" />
 
 This tab is responsible for displaying a list of single-digit numbers, and when you click on each number, it navigates to a page showing events with a location that starts with that single-digit number.
 
@@ -385,6 +401,8 @@ I extract "index" and "page" route parameters from the current navigation state.
 ```
 
 ## 8. Events Page Screen
+
+<img src="ScreenShots/Location_1.png" alt="Home Screen" width="200" />
 
 1. The `EventPageScreen` composable function renders a page that shows events for a specific location. It takes parameters such as `eventsLocRes` (containing the events, which we get with the code above), `navController` (for navigation), `location` (the specific location), and `page` (the current page number).
 
@@ -434,6 +452,20 @@ composable("oneEvent/{_id}") { backStackEntry ->
 
 ## 9. Event Page - Single Event
 
+### If loggedIn:
+
+- Join Event
+  <img src="ScreenShots/Event_LoggedIn.png" alt="Home Screen" width="200" />
+  <img src="ScreenShots/EventJoined.png" alt="Home Screen" width="200" />
+
+-UnJoin Event
+<img src="ScreenShots/Unregister.png" alt="Home Screen" width="200" />
+<img src="ScreenShots/Unregistered.png" alt="Home Screen" width="200" />
+
+### If not logged in:
+
+<img src="ScreenShots/Event.png" alt="Home Screen" width="200" />
+
 The `EventPage` composable function renders a page that displays detailed information about a single event. It provides options for user registration or unregistration based on the user's logged-in status and registration status for the event (get these from params)
 
 1. User Data:
@@ -445,9 +477,9 @@ The `EventPage` composable function renders a page that displays detailed inform
 3. Registration Buttons:
    Depending on the user's logged-in status and registration status for the event, different buttons are displayed.
 
-    - If the user is logged in and not registered for the event, a "Join Event" button is shown. Clicking on this button triggers a coroutine that calls `KtorClient.joinEvent` to register the user for the event. The result is shown as a snackbar using `snackbarHostState.showSnackbar`. If quota is available, we can register the user. Otherwise, no.
+   - If the user is logged in and not registered for the event, a "Join Event" button is shown. Clicking on this button triggers a coroutine that calls `KtorClient.joinEvent` to register the user for the event. The result is shown as a snackbar using `snackbarHostState.showSnackbar`. If quota is available, we can register the user. Otherwise, no.
 
-    - If the user is logged in and already registered for the event, an "Unregister" button is displayed. Clicking on this button triggers a coroutine that calls `KtorClient.unRegister` to unregister the user from the event. The result is shown as a snackbar.
+   - If the user is logged in and already registered for the event, an "Unregister" button is displayed. Clicking on this button triggers a coroutine that calls `KtorClient.unRegister` to unregister the user from the event. The result is shown as a snackbar.
 
 4. Snackbar:
    The `snackbarHostState` is used to show snackbar messages for registration or unregistration results, as well as any errors.
@@ -455,6 +487,8 @@ The `EventPage` composable function renders a page that displays detailed inform
 ## 10. User Page - Show Registered Event
 
 - User can navigate to "User" Page to see registered Events. I could have reused `FeedScreen`, but API for getting events for specific user does not have `perPage`, so we will just show all the events on one screen.
+
+<img src="ScreenShots/RegisteredEvents.png" alt="Home Screen" width="200" />
 
 1. Get Registered Events using API
 
@@ -483,8 +517,8 @@ composable("user") {
 1. No Pagination needed for Registered Events.
 2. Age Groups:
 
-> val ageGroups = arrayOf("15-18", "18-21", "21-30", "30-50", "50+") 3. Quota, date for event registration is not checked. Assumed to be checked by the backed. 4. If I go to Location Page, Press "1", go to "Users", then come back to "Location", I will see events for "1", not the starter location page,
+> val ageGroups = arrayOf("15-18", "18-21", "21-30", "30-50", "50+")
 
-## Screenshots
+3. Quota, date for event registration is not checked. Assumed to be checked by the backed.
 
-![Screenshot showing For You screen, Interests screen and Topic detail screen](docs/images/screenshots.png 'Screenshot showing For You screen, Interests screen and Topic detail screen')
+4. If I go to Location Page, Press "1", go to "Users", then come back to "Location", I will see events for "1", not the starter location page,
