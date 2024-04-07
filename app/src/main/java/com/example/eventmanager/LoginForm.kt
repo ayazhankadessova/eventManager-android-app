@@ -60,7 +60,7 @@ fun LoginField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Login",
+    label: String = "Email",
     placeholder: String = "Enter your Login"
 ) {
 
@@ -152,6 +152,8 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
             Button(
                 onClick = {
                     coroutineScope.launch {
+
+
                         val stringBody: String? = login(credentials.login, credentials.pwd)
 
 
@@ -182,7 +184,7 @@ fun LoginForm(navController: NavController, snackbarHostState: SnackbarHostState
                 shape = RoundedCornerShape(5.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Login")
+                Text("login")
             }
             Spacer(modifier = Modifier.height(20.dp))
 

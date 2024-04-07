@@ -100,7 +100,7 @@ object KtorClient {
     // This allows us to write cleaner, more concise code that's easier to read and maintain.
     suspend fun getEvents(page: Int): Response {
         try {
-            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events?page=$page")
+            return httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events?page=$page&highlight=true")
                 .body<Response>()// Access the list of events from the parsed Response object
         } catch (e: Exception) {
             // Log the exception for better debugging

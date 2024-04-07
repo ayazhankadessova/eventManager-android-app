@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(eventsForPage: Response, navController: NavHostController, search:Boolean, page:Int, searchQueryOld:String) {
+fun FeedScreen(eventsForPage: Response, navController: NavHostController, search:Boolean, page:Int) {
 
     var searchQuery by remember { mutableStateOf("") }
     var events by remember { mutableStateOf(eventsForPage.events) }

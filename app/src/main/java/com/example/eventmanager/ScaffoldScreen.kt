@@ -79,13 +79,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
     var items = if (loggedIn) listOf("Home", "Events", "Search", "User") else listOf("Home", "Events", "Search", "Login")
 
 
-    val events by produceState(
-        initialValue = emptyList<Event>(),
-        producer = {
-            value = KtorClient.getEvents(1).events
-        }
-    )
-
     val response by produceState(
         initialValue = Response(listOf<Event>(), null, null, null),
         producer = {
@@ -152,26 +145,10 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     // mapping of routes and what screens will be shown
                     composable("home") {
                         selectedItem = 0
-                        FeedScreen(response, navController, false, 1, "")
+                        FeedScreen(response, navController, false, 1)
                     }
-//                    composable("home/{page}") {backStackEntry ->
-//                        selectedItem = 0
-//                        val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
-//                        backStackEntry.arguments?.toString()?.let { Log.i("index", it) }
-//                        if (page !=null) {
-//                            var eventsForPage by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
-//                            LaunchedEffect(page) {
-//                                eventsForPage  = KtorClient.getEvents(page)
-//                            }
-//                            FeedScreen(eventsForPage, navController, false, page, "")
-////                            EventPageScreen(eventsForLocRes, navController, location.toString(), page)
-//                        } else {
-//                            // Handle the case where index is null
-//                        }
-//
-//                    }
                     composable("search") {
-                        FeedScreen(response, navController, true, 1, "")
+                        FeedScreen(response, navController, true, 1)
                     }
 
                     composable("events"){ EventScreen(navController)}
@@ -187,6 +164,11 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             }
                             EventPageScreen(eventsForLocRes, navController, location.toString(), page)
                         } else {
+
+                            if (page != null) {
+                                EventPageScreen( Response(listOf<Event>(), null, null, null), navController, location.toString(), page)
+                            }
+
                             // Handle the case where index is null
                         }
                     }
@@ -204,8 +186,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                                 registered =
                                     KtorClient.getEvent(eventId)?.volunteers?.contains(userId) ?: false
                             }
-
-
 
                             event?.let { EventPage(event!!, snackbarHostState, loggedIn, registered) }
                         } else {
@@ -225,12 +205,15 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                         } else {
                             // Handle the case where eventId is null
                             Log.i("Event id is null" ," NULL");
+                            MyFeedScreen(listOf<Event>(), navController)
 
                         }
                     }
 
                     composable("login") { LoginForm(navController, snackbarHostState, loginViewModel) }
-                    composable("registrationPage") { RegistrationForm(snackbarHostState, navController)}
+                    composable("registrationPage") {
+                        selectedItem = 3
+                        RegistrationForm(snackbarHostState, navController)}
                 }
             }
         }

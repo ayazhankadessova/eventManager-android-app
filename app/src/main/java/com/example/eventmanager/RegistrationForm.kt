@@ -226,7 +226,6 @@ fun RegistrationForm(snackbarHostState: SnackbarHostState, navController: NavHos
                             } else {
                                 snackbarHostState.showSnackbar("Error while creating new account.")
                             }
-
                         }
 
                     }

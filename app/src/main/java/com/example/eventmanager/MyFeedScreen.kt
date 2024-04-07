@@ -34,7 +34,6 @@ fun MyFeedScreen(eventsForPage: List<Event>, navController: NavHostController) {
     val whiteBorder = Color.White
     LazyColumn {
         items(eventsForPage) { event ->
-            val isClicked = remember { mutableStateOf(false) }
 
             Card (
                 onClick = { navController.navigate("oneEvent/${event._id}") },
