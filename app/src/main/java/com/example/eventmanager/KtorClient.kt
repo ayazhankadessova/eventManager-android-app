@@ -170,9 +170,11 @@ object KtorClient {
 
                 "Event Joined."
 
+            } else if (response.status === HttpStatusCode.Conflict) {
+                "Error: out of quota!"
             } else {
 
-                "Error: unavailable or full quota!"
+                "Error: unavailable!"
 
             }
         } catch (e: Exception) {

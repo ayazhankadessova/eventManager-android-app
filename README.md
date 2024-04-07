@@ -152,9 +152,12 @@ NavHost(
 }
 ```
 
-## 4. Feed Screen & Search Screen
+## 4. Feed (Home) Screen & Search Screen
 
 `FeedScreen` and `fetchEvent` composable functions are responsible for displaying the feed of events, highlighted are shown first, and individual event items, respectively. Let's take a closer look at how each of these functions works and how they get updated.
+
+![Home Screen](ScreenShots/Home.png)
+
 
 ### 4.1. Params
 
@@ -442,7 +445,7 @@ The `EventPage` composable function renders a page that displays detailed inform
 3. Registration Buttons:
    Depending on the user's logged-in status and registration status for the event, different buttons are displayed.
 
-    - If the user is logged in and not registered for the event, a "Join Event" button is shown. Clicking on this button triggers a coroutine that calls `KtorClient.joinEvent` to register the user for the event. The result is shown as a snackbar using `snackbarHostState.showSnackbar`.
+    - If the user is logged in and not registered for the event, a "Join Event" button is shown. Clicking on this button triggers a coroutine that calls `KtorClient.joinEvent` to register the user for the event. The result is shown as a snackbar using `snackbarHostState.showSnackbar`. If quota is available, we can register the user. Otherwise, no.
 
     - If the user is logged in and already registered for the event, an "Unregister" button is displayed. Clicking on this button triggers a coroutine that calls `KtorClient.unRegister` to unregister the user from the event. The result is shown as a snackbar.
 
