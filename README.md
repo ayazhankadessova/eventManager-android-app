@@ -2,6 +2,8 @@
 
 ## Event Manager
 
+- make button in pagination smaller
+
 It is a **work in progress** 🚧.
 
 **Event Manager** is a functional Android app built entirely with Kotlin and Jetpack Compose. It

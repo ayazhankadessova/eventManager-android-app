@@ -114,7 +114,7 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                             verticalAlignment = Alignment.CenterVertically
                         ) {
 
-                            val startPage = max(1, currentPage - 2)
+                            val startPage = max(1, currentPage - 3)
                             if (startPage > 1) {
                                 Button(onClick = {
                                     currentPage = 1
@@ -123,7 +123,7 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                                 }
                                 Text("...")
                             }
-                            val endPage = min(totalPages, currentPage + 2)
+                            val endPage = min(totalPages, currentPage)
                             for (i in startPage..endPage) {
                                 Button(onClick = {
                                     currentPage = i
@@ -169,7 +169,7 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                             verticalAlignment = Alignment.CenterVertically
                         ) {
 
-                            val startPage = max(1, currentPage - 2)
+                            val startPage = max(1, currentPage - 3)
                             if (startPage > 1) {
                                 Button(onClick = {
                                     currentPage = 1
@@ -178,7 +178,7 @@ fun FeedScreen(eventsForPage: Response, navController: NavHostController, search
                                 }
                                 Text("...")
                             }
-                            val endPage = min(totalPagesSearch, currentPage + 2)
+                            val endPage = min(totalPagesSearch, currentPage)
                             for (i in startPage..endPage) {
                                 Button(onClick = {
                                     currentPage = i

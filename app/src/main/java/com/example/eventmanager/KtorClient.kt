@@ -1,5 +1,6 @@
 package com.example.eventmanager
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.room.Entity
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -135,6 +136,10 @@ object KtorClient {
 //            throw e // Re-throw the exception for caller to handle
             return Response(listOf<Event>(), null, null, null)
         }
+    }
+
+    fun logout() {
+        token = ""
     }
 
     suspend fun getMyEvents(id : String): ResponseNew? {

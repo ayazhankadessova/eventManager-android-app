@@ -23,11 +23,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import android.util.Log;
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -35,6 +37,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 //import com.example.infoday.ui.theme.InfoDayTheme
@@ -71,6 +74,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
     val userId by dataStore.getUserId.collectAsState(initial = null)
 
     var loggedIn:Boolean = loginViewModel.loggedIn.value
+    val coroutineScope = rememberCoroutineScope()
 //    val loggedIn = loginViewModel.loggedIn.value
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -107,6 +111,29 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                 title = {
                     Text(getScreenTitle(navController, items))
                 },
+                actions = {
+
+                    if (loggedIn) {
+                        // Logout button
+                        IconButton(onClick = {
+                            loginViewModel.logOut()
+
+                            coroutineScope.launch {
+                                dataStore.removeUserId()
+                                snackbarHostState.showSnackbar("Logged Out...")
+                            }
+                            navController.navigate("home")
+
+                        }) {
+                            Icon(
+                                Icons.Outlined.ExitToApp,
+                                contentDescription = "Logout",
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                    }
+
+                }
 
 
             )

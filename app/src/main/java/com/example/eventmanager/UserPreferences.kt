@@ -26,4 +26,10 @@ class UserPreferences(private val context: Context) {
             preferences[User_id] = userId
         }
     }
+
+    suspend fun removeUserId() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(User_id)
+        }
+    }
 }
