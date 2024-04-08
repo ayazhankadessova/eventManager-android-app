@@ -44,7 +44,7 @@ fun EventPageScreen(
             item {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                     val startPage = kotlin.math.max(1, page - 2)
-                    val endPage = kotlin.math.min(totalPages, page + 2)
+                    val endPage = kotlin.math.min(totalPages, page)
                     for (i in startPage..endPage) {
                         Button(onClick = { navController.navigate("event/${location}/$i") }) {
                             Text("$i")
