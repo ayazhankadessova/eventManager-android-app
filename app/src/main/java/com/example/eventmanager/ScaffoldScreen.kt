@@ -113,7 +113,7 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                 },
                 actions = {
 
-                    if (loggedIn) {
+                    if (loggedIn && selectedItem == 3) {
                         // Logout button
                         IconButton(onClick = {
                             loginViewModel.logOut()

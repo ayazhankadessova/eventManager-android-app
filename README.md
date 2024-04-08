@@ -11,7 +11,7 @@ follows Android design and development best practices and is intended to be a us
 
 ## Screenshots
 
-<img src="ScreenShots/Home.png" alt="Home Screen" width="200" /><img src="ScreenShots/Home_Pagination.png" alt="Home Screen" width="200" /><img src="ScreenShots/Search_te.png" alt="Home Screen" width="200" /><img src="ScreenShots/BecomeVol.png" alt="Home Screen" width="200" /><img src="ScreenShots/Login.png" alt="Home Screen" width="200" /><img src="ScreenShots/Events_1-9.png" alt="Home Screen" width="200" /><img src="ScreenShots/Location_1.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event_LoggedIn.png" alt="Home Screen" width="200" /><img src="ScreenShots/EventJoined.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregister.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregistered.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event.png" alt="Home Screen" width="200" /><img src="ScreenShots/RegisteredEvents.png" alt="Home Screen" width="200" />
+<img src="ScreenShots/Home.png" alt="Home Screen" width="200" /><img src="ScreenShots/Home_Pagination.png" alt="Home Screen" width="200" /><img src="ScreenShots/Search_te.png" alt="Home Screen" width="200" /><img src="ScreenShots/BecomeVol.png" alt="Home Screen" width="200" /><img src="ScreenShots/Login.png" alt="Home Screen" width="200" /><img src="ScreenShots/Events_1-9.png" alt="Home Screen" width="200" /><img src="ScreenShots/Location_1.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event_LoggedIn.png" alt="Home Screen" width="200" /><img src="ScreenShots/EventJoined.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregister.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregistered.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event.png" alt="Home Screen" width="200" /><img src="ScreenShots/RegisteredEvents.png" alt="Home Screen" width="200" /><img src="ScreenShots/LogOut.png" alt="Home Screen" width="200" /><img src="ScreenShots/LoggedOut.png" alt="Home Screen" width="200" />
 
 ## 1. API
 
@@ -79,6 +79,8 @@ To make requests for the above API, I am using KtorClient, a HTTP client library
 - The `getEvent` function makes a GET request to retrieve a specific event by its ID.
 - The `register` function makes a POST request to register a new user by providing the necessary registration information.
 - The `login` function makes a POST request to authenticate a user by providing their email and password.
+- The `logout` function removes the token (makes it empty).
+
 
 ### 2.5. HTTP Client Configuration:
 
@@ -514,6 +516,36 @@ composable("user") {
 
 2. `MyFeedScreen` is just like `FeedScreen`, but no pagination, a composable function that renders a screen displaying a list of events in a feed-like format. It uses a `LazyColumn` for vertical scrolling and iterates over the provided `eventsForPage` list. Each event is displayed as a `Card` with a clickable behavior that navigates to the event's page. The card contains an image, title, and organizer information. A divider separates each event in the list.
 
+* There will be "LogOut" button on top of the page. By pressing it, user logs out. Token is deleted and userId is deleted from datastore.
+
+```agsl
+Scaffold(
+     ...
+             actions = {
+
+                 if (loggedIn && selectedItem == 3) {
+                     // Logout button
+                     IconButton(onClick = {
+                         loginViewModel.logOut()
+
+                         coroutineScope.launch {
+                             dataStore.removeUserId()
+                             snackbarHostState.showSnackbar(Logged Out...)
+                         }
+                         navController.navigate(home)
+
+                     }) {
+                         Icon(
+                             Icons.Outlined.ExitToApp,
+                             contentDescription = Logout,
+                             tint = MaterialTheme.colorScheme.secondary
+                         )
+                     }
+                 }
+             }
+         )
+     },
+```
 ## Assumptions
 
 1. No Pagination needed for Registered Events.
