@@ -1,8 +1,4 @@
-### 21204276
-
 ## Event Manager
-
-- make button in pagination smaller
 
 It is a **work in progress** 🚧.
 
@@ -80,7 +76,6 @@ To make requests for the above API, I am using KtorClient, a HTTP client library
 - The `register` function makes a POST request to register a new user by providing the necessary registration information.
 - The `login` function makes a POST request to authenticate a user by providing their email and password.
 - The `logout` function removes the token (makes it empty).
-
 
 ### 2.5. HTTP Client Configuration:
 
@@ -516,7 +511,7 @@ composable("user") {
 
 2. `MyFeedScreen` is just like `FeedScreen`, but no pagination, a composable function that renders a screen displaying a list of events in a feed-like format. It uses a `LazyColumn` for vertical scrolling and iterates over the provided `eventsForPage` list. Each event is displayed as a `Card` with a clickable behavior that navigates to the event's page. The card contains an image, title, and organizer information. A divider separates each event in the list.
 
-* There will be "LogOut" button on top of the page. By pressing it, user logs out. Token is deleted and userId is deleted from datastore.
+- There will be "LogOut" button on top of the page. By pressing it, user logs out. Token is deleted and userId is deleted from datastore.
 
 ```agsl
 Scaffold(
@@ -546,6 +541,7 @@ Scaffold(
          )
      },
 ```
+
 ## Assumptions
 
 1. No Pagination needed for Registered Events.
