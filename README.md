@@ -1,13 +1,54 @@
 ## Event Manager
 
-It is a **work in progress** 🚧.
+Built from scratch by [Ayazhan Kadessova](https://github.com/ayazhankadessova). It is a **work in progress** 🚧.
 
-**Event Manager** is a functional Android app built entirely with Kotlin and Jetpack Compose. It
-follows Android design and development best practices and is intended to be a useful practice. As a running app, it's intended to help volunteers search for events, as well as join/unjoin events offered by HKBU.
+**Event Manager** is a functional Android app built entirely with Kotlin and Jetpack Compose. As a running app, it's intended to help volunteers search for events, as well as join/unjoin events offered by HKBU.
 
 ## Screenshots
 
 <img src="ScreenShots/Home.png" alt="Home Screen" width="200" /><img src="ScreenShots/Home_Pagination.png" alt="Home Screen" width="200" /><img src="ScreenShots/Search_te.png" alt="Home Screen" width="200" /><img src="ScreenShots/BecomeVol.png" alt="Home Screen" width="200" /><img src="ScreenShots/Login.png" alt="Home Screen" width="200" /><img src="ScreenShots/Events_1-9.png" alt="Home Screen" width="200" /><img src="ScreenShots/Location_1.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event_LoggedIn.png" alt="Home Screen" width="200" /><img src="ScreenShots/EventJoined.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregister.png" alt="Home Screen" width="200" /><img src="ScreenShots/Unregistered.png" alt="Home Screen" width="200" /><img src="ScreenShots/Event.png" alt="Home Screen" width="200" /><img src="ScreenShots/RegisteredEvents.png" alt="Home Screen" width="200" /><img src="ScreenShots/LogOut.png" alt="Home Screen" width="200" /><img src="ScreenShots/LoggedOut.png" alt="Home Screen" width="200" />
+
+## Table of Contents
+
+- [Event Manager](#event-manager)
+- [Screenshots](#screenshots)
+- [Table of Contents](#table-of-contents)
+- [1. API](#1-api)
+  - [1.1. Retrieve Events: `GET` `/api/events/`](#11-retrieve-events-get-apievents)
+  - [1.2. Get specific event: `GET` `/api/events/{id}`](#12-get-specific-event-get-apieventsid)
+  - [1.3. Register logged-in volunteers for events: `POST` `/api/events/{id}/volunteers`](#13-register-logged-in-volunteers-for-events-post-apieventsidvolunteers)
+  - [1.4. UNregister logged-in volunteers for events: `Delete` `/api/events/{id}/volunteers`](#14-unregister-logged-in-volunteers-for-events-delete-apieventsidvolunteers)
+  - [1.5. Register as volunteers: `POST` `api/volunteers`](#15-register-as-volunteers-post-apivolunteers)
+  - [1.6. Retrieve volunteer information: `GET` `api/volunteers/{id}/`](#16-retrieve-volunteer-information-get-apivolunteersid)
+  - [1.7. Get Volunteer information with their registered events: `GET` `api/volunteers/{id}/events`](#17-get-volunteer-information-with-their-registered-events-get-apivolunteersidevents)
+  - [1.8. Log in users: `POST` `api/login`](#18-log-in-users-post-apilogin)
+- [2. Sending Requests with KtorClient](#2-sending-requests-with-ktorclient)
+  - [2.1. Serialization of Inputs and Deserialization of Outputs:](#21-serialization-of-inputs-and-deserialization-of-outputs)
+  - [2.2. Content Negotiation:](#22-content-negotiation)
+  - [2.3. Error Handling:](#23-error-handling)
+  - [2.4. Making HTTP Requests:](#24-making-http-requests)
+  - [2.5. HTTP Client Configuration:](#25-http-client-configuration)
+- [3. MainActivity \& Navigation with ScaffoldScreen, NavHost, NavController](#3-mainactivity--navigation-with-scaffoldscreen-navhost-navcontroller)
+  - [3.1 Main Activity](#31-main-activity)
+  - [3.2 ScaffoldScreen](#32-scaffoldscreen)
+- [4. Feed (Home) Screen \& Search Screen](#4-feed-home-screen--search-screen)
+  - [Home Screen](#home-screen)
+  - [Search Screen](#search-screen)
+  - [4.1. Params](#41-params)
+  - [4.2. Remember State](#42-remember-state)
+  - [4.3. Search functionality](#43-search-functionality)
+  - [4.4. Regular Feed](#44-regular-feed)
+- [4.5. Individual Events](#45-individual-events)
+- [4.6. Coroutines](#46-coroutines)
+- [5. Registration - Become volunteer](#5-registration---become-volunteer)
+- [6. Login Form](#6-login-form)
+- [7. Location Page](#7-location-page)
+- [8. Events Page Screen](#8-events-page-screen)
+- [9. Event Page - Single Event](#9-event-page---single-event)
+  - [If loggedIn:](#if-loggedin)
+  - [If not logged in:](#if-not-logged-in)
+- [10. User Page - Show Registered Event](#10-user-page---show-registered-event)
+- [Assumptions](#assumptions)
 
 ## 1. API
 
