@@ -1,7 +1,6 @@
 package com.example.eventmanager
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 
 class LoginViewModel: ViewModel() {

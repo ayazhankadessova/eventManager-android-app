@@ -45,25 +45,21 @@ import java.util.Locale
 @Composable
 fun getScreenTitle(navController: NavController, items: List<String>): String {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination?.route?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
-        Locale.getDefault()) else it.toString() }
-    if (currentDestination != null) {
-        Log.i("Dest route: " , currentDestination)
+    val currentDestination = navBackStackEntry?.destination?.route?.replaceFirstChar { 
+        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
     }
 
-    if (currentDestination == "Event/{index}/{page}") {
-        return "Location"
-    } else if (currentDestination == "OneEvent/{_id}") {
-        return "Event Title"
-    } else if (currentDestination == "Search") {
-        return "Events"
-    } else if (currentDestination == "RegistrationPage") {
-        return "Become Volunteer"
-    } else if (currentDestination == "User") {
-        return "Registered Events"
+    return when (currentDestination) {
+        "Event/{index}/{page}" -> "Location"
+        "OneEvent/{_id}" -> "Event Title"
+        "Search" -> "Events"
+        "RegistrationPage" -> "Become Volunteer"
+        "User" -> "Registered Events"
+        else -> {
+            val index = items.indexOf(currentDestination)
+            if (index != -1) items[index] else "App"
+        }
     }
-    val index = items.indexOf(currentDestination)
-    return if (index != -1) items[index] else "App"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
