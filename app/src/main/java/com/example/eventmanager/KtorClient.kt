@@ -128,7 +128,6 @@ object KtorClient {
 //            Log.i("[Get My Events] userId", id)
             val response: Response = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/events/?page=$page&search=$query")
                 .body<Response>()// Access the list of events from the parsed Response object
-            Log.i("[Get Event Search] userId", response.toString())
             return response
         } catch (e: Exception) {
             // Log the exception for better debugging
@@ -144,15 +143,10 @@ object KtorClient {
 
     suspend fun getMyEvents(id : String): ResponseNew? {
         return try {
-            Log.i("[Get My Events] Token", token)
-            Log.i("[Get My Events] userId", id)
             val responseNew = httpClient.get("https://comp4107-spring2024.azurewebsites.net/api/volunteers/$id/events")
                 .body<ResponseNew>()// Access the list of events from the parsed Response object
-            Log.i("REPONSE New", responseNew.toString())
             responseNew
         } catch (e: Exception) {
-            // Log the exception for better debugging
-            // ...
             null // Re-throw the exception for caller to handle
         }
     }
@@ -160,15 +154,9 @@ object KtorClient {
 
     suspend fun joinEvent(eventId : String, userId: String): String {
         try {
-
-            //        val loginRequest = LoginRequest(email, password)
-            Log.i("[Join Event] eventId:", eventId)
-            Log.i("[Join Event] userId", userId)
             val response: HttpResponse =
                 httpClient.post("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
                 }
-
-            Log.i("[Join Event]", response.body())
 
             return if (response.status == HttpStatusCode.OK) {
                 // event if join twice, ok
@@ -191,14 +179,9 @@ object KtorClient {
 
     suspend fun unRegister(eventId : String, userId: String): String {
         try {
-            //        val loginRequest = LoginRequest(email, password)
-            Log.i("[Unregister] eventId:", eventId)
-            Log.i("[Unregister] userId", userId)
             val response: HttpResponse =
                 httpClient.delete("https://comp4107-spring2024.azurewebsites.net/api/events/$eventId/volunteers/") {
                 }
-
-            Log.i("[Unregister]", response.body())
 
             return if (response.status == HttpStatusCode.OK) {
 
@@ -231,18 +214,13 @@ object KtorClient {
                 contentType(ContentType.Application.Json)
                 setBody(RegistrationRequest(email,password, name, contact, age_group, about, terms.toString()))
             }
-
-            Log.i("[Register]", response.toString())
-
             return if (response.status == HttpStatusCode.Created ) {
                 val insertedId: String = response.body<RegistrationResponse>().id.insertedId
-                Log.i("insertedId", insertedId)
                 insertedId
             } else {
                 null
             }
         } catch (e: Exception) {
-            Log.e("[Register]", "Error during registration.", e)
             return null
         }
     }
@@ -257,13 +235,11 @@ object KtorClient {
             return if (response.status == HttpStatusCode.OK) {
                 val tokenSet: String = response.body<LoginResponse>().token
                 token = tokenSet
-                Log.i("TOKEEEN", token)
                 tokenSet
             } else {
                 null
             }
         } catch (e: Exception) {
-            Log.e("[Login]", "Error during login", e)
             return null
         }
     }
