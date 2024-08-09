@@ -71,7 +71,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
 
     var loggedIn:Boolean = loginViewModel.loggedIn.value
     val coroutineScope = rememberCoroutineScope()
-//    val loggedIn = loginViewModel.loggedIn.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     val navController = rememberNavController()
@@ -143,7 +142,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                         // navigate to a new destination, clear all previous destinations from the back stack (while saving their state), and ensure that only one instance of each destination exists on the back stack.
                         onClick = {
                             selectedItem = index
-                            // navController.navigate("Events")
                             navController.navigate(items[selectedItem]) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
@@ -179,7 +177,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                     composable("event/{index}/{page}") { backStackEntry ->
                         val location : String? = backStackEntry.arguments?.getString("index")
                         val page : Int? = backStackEntry.arguments?.getString("page")?.toIntOrNull()
-                        backStackEntry.arguments?.toString()?.let { Log.i("index", it) }
                         if (location != null && page !=null) {
                             var eventsForLocRes by remember { mutableStateOf(Response(listOf<Event>(), null, null, null)) }
                             LaunchedEffect(location) {
@@ -213,8 +210,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             event?.let { EventPage(event!!, snackbarHostState, loggedIn, registered) }
                         } else {
                             // Handle the case where eventId is null
-                            Log.i("Event id is null" ," NULL");
-
                         }
                     }
                     composable("user") {
@@ -227,7 +222,6 @@ fun ScaffoldScreen(loginViewModel: LoginViewModel) {
                             MyFeedScreen(eventsForPage, navController)
                         } else {
                             // Handle the case where eventId is null
-                            Log.i("Event id is null" ," NULL");
                             MyFeedScreen(listOf<Event>(), navController)
 
                         }
