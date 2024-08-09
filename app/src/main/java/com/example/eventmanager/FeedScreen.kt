@@ -41,182 +41,186 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(eventsForPage: Response, navController: NavHostController, search:Boolean, page:Int) {
-
-    var searchQuery by remember { mutableStateOf("") }
-    var events by remember { mutableStateOf(eventsForPage.events) }
-    var active by remember { mutableStateOf(false) } // Active state for SearchBar
+fun FeedScreen(
+    eventsForPage: Response,
+    navController: NavHostController,
+    search: Boolean,
+    page: Int
+) {
+    val (searchQuery, setSearchQuery) = remember { mutableStateOf("") }
+    val (events, setEvents) = remember { mutableStateOf(eventsForPage.events) }
+    val (active, setActive) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    var totalPagesSearch = eventsForPage.total?.div(eventsForPage.perPage!!)
-    var totalPagesSearchNew by remember { mutableStateOf(totalPagesSearch) }
-    var currentPage by remember { mutableStateOf(1) }  // Initialize to 1 (first page)
-
-
+    val (totalPagesSearchNew, setTotalPagesSearchNew) = remember {
+        mutableStateOf(eventsForPage.total?.div(eventsForPage.perPage ?: 1))
+    }
+    val (currentPage, setCurrentPage) = remember { mutableStateOf(1) }
 
     if (search) {
-
-        Column {
-            SearchBar(
-                modifier = Modifier.fillMaxWidth(),
-                query = searchQuery,
-                onQueryChange = { newQuery -> searchQuery = newQuery },
-                active = active,
-                placeholder = { Text(text = "Search events") },
-                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon") },
-                onActiveChange = {
-                    active = it
-                },
-                onSearch = {
-
-                    coroutineScope.launch {
-                        try {
-                            val response = KtorClient.getEventsSearch(searchQuery, page)
-                            // Update the list of events with the result from the API
-                            events = response.events
-                            totalPagesSearchNew = response.total?.div(response.perPage!!)
-
-                            Log.i("TOTAL PAGES", totalPagesSearchNew.toString())
-                        } catch (e: Exception) {
-                            // Handle the exception
-                        }
-                    }
-
-                    active = false
-                },
-                content = {},
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        Icon(
-                            modifier = Modifier.clickable { searchQuery = "" },
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Clear search query"
-                        )
-                    }
-                }
-            )
-
-            LazyColumn {
-                items(events) {
-
-                    event -> fetchEvent(event, navController)
-                }
-                item {
-
-                    val totalPages = totalPagesSearchNew ?: return@item
-                    Log.i("TOTAL PAGES", totalPages.toString())
-                    if (totalPages >=1) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth().padding(10.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            val startPage = max(1, currentPage - 3)
-                            if (startPage > 1) {
-                                Button(onClick = {
-                                    currentPage = 1
-                                    coroutineScope.launch { events = KtorClient.getEventsSearch(searchQuery, 1).events } }) {
-                                    Text("1")
-                                }
-                                Text("...")
-                            }
-                            val endPage = min(totalPages, currentPage)
-                            for (i in startPage..endPage) {
-                                Button(onClick = {
-                                    currentPage = i
-                                    coroutineScope.launch { events = KtorClient.getEventsSearch(searchQuery, i).events } }) {
-                                    Text("$i")
-                                }
-                            }
-                            if (endPage < totalPages) {
-                                Text("...")
-                                Button(onClick = {
-                                    currentPage = totalPages
-                                    coroutineScope.launch { events = KtorClient.getEventsSearch(searchQuery, totalPages).events } }) {
-                                    Text("$totalPages")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+        SearchSection(
+            searchQuery = searchQuery,
+            setSearchQuery = setSearchQuery,
+            active = active,
+            setActive = setActive,
+            coroutineScope = coroutineScope,
+            setEvents = setEvents,
+            setTotalPagesSearchNew = setTotalPagesSearchNew
+        )
+        EventsSection(
+            events = events,
+            navController = navController,
+            totalPagesSearchNew = totalPagesSearchNew,
+            currentPage = currentPage,
+            setCurrentPage = setCurrentPage,
+            coroutineScope = coroutineScope,
+            searchQuery = searchQuery
+        )
     } else {
-        LazyColumn {
-            if (events.isEmpty()) {
-                events = eventsForPage.events
-            }
-            items(events) {
-                event -> fetchEvent(event, navController)
+        EventsSection(
+            events = if (events.isEmpty()) eventsForPage.events else events,
+            navController = navController,
+            totalPagesSearchNew = eventsForPage.total?.div(eventsForPage.perPage ?: 1),
+            currentPage = currentPage,
+            setCurrentPage = setCurrentPage,
+            coroutineScope = coroutineScope,
+            searchQuery = ""
+        )
+    }
+}
 
-            }
-
-            // Pagination here
-            if (totalPagesSearch != null) {
-
-                item {
-                    Log.i("TOTAL PAGES", totalPagesSearch.toString())
-                    if (totalPagesSearch >=1) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth().padding(10.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            val startPage = max(1, currentPage - 3)
-                            if (startPage > 1) {
-                                Button(onClick = {
-                                    currentPage = 1
-                                    coroutineScope.launch { events = KtorClient.getEvents(1).events } }) {
-                                    Text("1")
-                                }
-                                Text("...")
-                            }
-                            val endPage = min(totalPagesSearch, currentPage)
-                            for (i in startPage..endPage) {
-                                Button(onClick = {
-                                    currentPage = i
-                                    coroutineScope.launch { events = KtorClient.getEvents(i).events } }) {
-                                    Text("$i")
-                                }
-                            }
-                            if (endPage < totalPagesSearch) {
-                                Text("...")
-                                Button(onClick = {
-                                    currentPage = totalPagesSearch
-                                    coroutineScope.launch { events = KtorClient.getEvents(totalPagesSearch).events } }) {
-                                    Text("$totalPagesSearch")
-                                }
-                            }
-                        }
-                    }
+@Composable
+fun SearchSection(
+    searchQuery: String,
+    setSearchQuery: (String) -> Unit,
+    active: Boolean,
+    setActive: (Boolean) -> Unit,
+    coroutineScope: CoroutineScope,
+    setEvents: (List<Event>) -> Unit,
+    setTotalPagesSearchNew: (Int?) -> Unit
+) {
+    SearchBar(
+        modifier = Modifier.fillMaxWidth(),
+        query = searchQuery,
+        onQueryChange = setSearchQuery,
+        active = active,
+        placeholder = { Text(text = "Search events") },
+        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon") },
+        onActiveChange = setActive,
+        onSearch = {
+            coroutineScope.launch {
+                try {
+                    val response = KtorClient.getEventsSearch(searchQuery, 1)
+                    setEvents(response.events)
+                    setTotalPagesSearchNew(response.total?.div(response.perPage ?: 1))
+                } catch (e: Exception) {
+                    // Handle the exception
                 }
             }
+            setActive(false)
+        },
+        content = {},
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                Icon(
+                    modifier = Modifier.clickable { setSearchQuery("") },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Clear search query"
+                )
+            }
         }
-      }
+    )
+}
+
+@Composable
+fun EventsSection(
+    events: List<Event>,
+    navController: NavHostController,
+    totalPagesSearchNew: Int?,
+    currentPage: Int,
+    setCurrentPage: (Int) -> Unit,
+    coroutineScope: CoroutineScope,
+    searchQuery: String
+) {
+    LazyColumn {
+        items(events) { event -> fetchEvent(event, navController) }
+        item {
+            val totalPages = totalPagesSearchNew ?: return@item
+            if (totalPages >= 1) {
+                PaginationSection(
+                    totalPages = totalPages,
+                    currentPage = currentPage,
+                    setCurrentPage = setCurrentPage,
+                    coroutineScope = coroutineScope,
+                    searchQuery = searchQuery
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun PaginationSection(
+    totalPages: Int,
+    currentPage: Int,
+    setCurrentPage: (Int) -> Unit,
+    coroutineScope: CoroutineScope,
+    searchQuery: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val startPage = max(1, currentPage - 3)
+        if (startPage > 1) {
+            Button(onClick = {
+                setCurrentPage(1)
+                coroutineScope.launch { KtorClient.getEventsSearch(searchQuery, 1).events }
+            }) {
+                Text("1")
+            }
+            Text("...")
+        }
+        val endPage = min(totalPages, currentPage)
+        for (i in startPage..endPage) {
+            Button(onClick = {
+                setCurrentPage(i)
+                coroutineScope.launch { KtorClient.getEventsSearch(searchQuery, i).events }
+            }) {
+                Text("$i")
+            }
+        }
+        if (endPage < totalPages) {
+            Text("...")
+            Button(onClick = {
+                setCurrentPage(totalPages)
+                coroutineScope.launch { KtorClient.getEventsSearch(searchQuery, totalPages).events }
+            }) {
+                Text("$totalPages")
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun fetchEvent(event: Event, navController:NavController) {
-
-    Card (
+fun fetchEvent(event: Event, navController: NavController) {
+    Card(
         onClick = { navController.navigate("oneEvent/${event._id}") },
         modifier = Modifier
-            .fillMaxWidth().height(200.dp)
+            .fillMaxWidth()
+            .height(200.dp)
     ) {
         Column {
             AsyncImage(
                 model = event.image,
                 contentDescription = "Home page Picture",
                 modifier = Modifier
-                    .fillMaxWidth().aspectRatio(1f)  // Change this to fillMaxWidth
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
             )
         }
     }
@@ -237,5 +241,4 @@ fun fetchEvent(event: Event, navController:NavController) {
             )
         }
     }
-
 }
